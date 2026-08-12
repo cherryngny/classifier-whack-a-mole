@@ -3,24 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cantonese Classifier Whack-a-Mole - SLP Deluxe Edition</title>
+  <title>Cantonese Classifier Whack-a-Mole - SLP Edition</title>
   <style>
     :root {
-      --primary: #3A7CA5;
-      --secondary: #48BB78;
+      --primary: #2B6CB0;
+      --secondary: #38A169;
       --accent: #E53E3E;
-      --sky: #A0C4FF;
-      --grass-light: #B5EAD7;
-      --grass-mid: #74C69D;
-      --grass-dark: #40916C;
-      --wood-light: #D4A373;
-      --wood-dark: #A3B18A;
       --text: #2D3748;
     }
 
     body {
       font-family: "PingFang HK", "Microsoft JhengHei", sans-serif;
-      background-color: #F4F7F6;
+      background-color: #EDF2F7;
       color: var(--text);
       margin: 0;
       padding: 15px;
@@ -32,7 +26,7 @@
 
     h1 {
       margin: 5px 0 12px 0;
-      color: #2D6A4F;
+      color: #276749;
       text-align: center;
       font-size: 1.8rem;
     }
@@ -55,7 +49,7 @@
       font-weight: bold;
       display: block;
       margin-bottom: 10px;
-      color: #2D6A4F;
+      color: #276749;
     }
 
     .radio-group {
@@ -69,88 +63,151 @@
       align-items: center;
       justify-content: center;
       padding: 10px;
-      background: #F0F7F4;
-      border: 2px solid #B7E4C7;
+      background: #F0FDF4;
+      border: 2px solid #BBF7D0;
       border-radius: 10px;
       cursor: pointer;
       font-size: 1.2rem;
       font-weight: bold;
-      color: #2D6A4F;
+      color: #276749;
       transition: all 0.2s ease;
     }
 
     .radio-btn input { display: none; }
 
     .radio-btn.selected {
-      background: #52B788;
+      background: #38A169;
       color: white;
-      border-color: #2D6A4F;
-      box-shadow: 0 4px 10px rgba(82, 183, 136, 0.3);
+      border-color: #276749;
+      box-shadow: 0 4px 10px rgba(56, 161, 105, 0.3);
     }
 
     button {
       width: 100%;
       padding: 12px;
       font-size: 1.1rem;
-      background: #40916C;
+      background: #276749;
       color: white;
       border: none;
       border-radius: 10px;
       font-weight: bold;
       cursor: pointer;
       transition: background 0.2s;
-      box-shadow: 0 4px 12px rgba(64, 145, 108, 0.3);
+      box-shadow: 0 4px 12px rgba(39, 103, 73, 0.3);
     }
 
-    button:hover { background: #2D6A4F; }
+    button:hover { background: #1D4ED8; }
 
-    /* Farm Game Environment Container */
+    /* DETAILED FARMLAND ENVIRONMENT CONTAINER */
     .game-container {
       position: relative;
       width: 100%;
       max-width: 640px;
-      height: 480px;
-      background: linear-gradient(to bottom, #C0E8F9 0%, #E2F0D9 35%, #95D5B2 100%);
+      height: 460px;
+      background: linear-gradient(to bottom, #90E0EF 0%, #CAF0F8 30%, #D8F3DC 55%, #74C69D 100%);
       border-radius: 20px;
-      border: 6px solid #74C69D;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      border: 6px solid #52B788;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.18);
       overflow: hidden;
       margin-bottom: 15px;
     }
 
-    /* Hills & Atmosphere */
+    /* Sun & Sky Details */
+    .sun {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      width: 54px;
+      height: 54px;
+      background: #FFD166;
+      border-radius: 50%;
+      box-shadow: 0 0 30px #FFD166, 0 0 60px #FFE6A7;
+    }
+
+    .cloud {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 20px;
+    }
+    .cloud-1 { top: 25px; left: 30px; width: 70px; height: 22px; }
+    .cloud-1::after { content:''; position: absolute; top: -10px; left: 15px; width: 30px; height: 30px; background: rgba(255, 255, 255, 0.85); border-radius: 50%; }
+    
+    .cloud-2 { top: 45px; left: 240px; width: 90px; height: 26px; }
+    .cloud-2::after { content:''; position: absolute; top: -14px; left: 25px; width: 40px; height: 40px; background: rgba(255, 255, 255, 0.85); border-radius: 50%; }
+
+    /* Mountain Silhouettes */
+    .mountain {
+      position: absolute;
+      bottom: 240px;
+      border-left: 90px solid transparent;
+      border-right: 90px solid transparent;
+      border-bottom: 80px solid #95D5B2;
+    }
+    .mt-1 { left: 40px; }
+    .mt-2 { right: 80px; border-bottom-color: #B7E4C7; }
+
+    /* Layered Rolling Hills Background */
     .hill-back {
       position: absolute;
       top: 140px;
       left: -40px;
       width: 720px;
       height: 140px;
-      background: #B7E4C7;
+      background: #74C69D;
       border-radius: 50%;
     }
 
     .hill-front {
       position: absolute;
-      top: 170px;
+      top: 175px;
       right: -50px;
       width: 740px;
       height: 160px;
-      background: #95D5B2;
+      background: #52B788;
       border-radius: 50%;
     }
 
-    .sun {
+    /* Wooden Fence */
+    .fence-bar {
       position: absolute;
-      top: 15px;
-      right: 25px;
-      width: 50px;
-      height: 50px;
-      background: #FFD166;
-      border-radius: 50%;
-      box-shadow: 0 0 25px #FFD166;
+      top: 140px;
+      width: 100%;
+      height: 6px;
+      background: #A0522D;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .fence-bar.lower { top: 154px; }
+
+    .fence-container {
+      position: absolute;
+      top: 125px;
+      width: 100%;
+      height: 45px;
+      display: flex;
+      justify-content: space-around;
+      padding: 0 10px;
+      box-sizing: border-box;
     }
 
-    /* Flowers scattered in Farm */
+    .picket {
+      width: 12px;
+      height: 42px;
+      background: #CD853F;
+      border-radius: 3px 3px 0 0;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.15);
+      position: relative;
+    }
+    .picket::after {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-bottom: 6px solid #CD853F;
+    }
+
+    /* Wildflowers */
     .flower {
       position: absolute;
       width: 10px;
@@ -161,40 +218,41 @@
       z-index: 2;
     }
     .fl-1 { top: 290px; left: 5%; }
-    .fl-2 { top: 260px; left: 48%; }
-    .fl-3 { top: 410px; right: 6%; }
+    .fl-2 { top: 240px; left: 48%; }
+    .fl-3 { top: 390px; right: 6%; }
+    .fl-4 { top: 410px; left: 42%; box-shadow: 0 0 0 3px #FF85A1; }
 
-    /* FIX 1: 5 SCATTERED HOLES (NON-GRID ORGANIC LAYOUT) */
+    /* ORGANIC SCATTERED MOLE SPOTS */
     .mole-spot {
       position: absolute;
-      width: 130px;
-      height: 200px;
+      width: 120px;
+      height: 180px;
     }
 
-    /* Asymmetric Placement across 3 vertical depth layers */
-    .spot-0 { top: 150px; left: 6%; z-index: 5; }    /* Top Layer */
-    .spot-1 { top: 140px; right: 10%; z-index: 5; }  /* Top Layer */
-    .spot-2 { top: 220px; left: 37%; z-index: 6; }   /* Middle Layer */
-    .spot-3 { top: 275px; left: 10%; z-index: 7; }   /* Bottom Layer */
-    .spot-4 { top: 285px; right: 14%; z-index: 7; }  /* Bottom Layer */
+    /* Asymmetric Natural Placement */
+    .spot-0 { top: 150px; left: 6%; z-index: 5; }    /* Top Left */
+    .spot-1 { top: 140px; right: 12%; z-index: 5; }  /* Top Right */
+    .spot-2 { top: 215px; left: 38%; z-index: 6; }   /* Center Mid */
+    .spot-3 { top: 265px; left: 12%; z-index: 7; }   /* Bottom Left */
+    .spot-4 { top: 275px; right: 16%; z-index: 7; }  /* Bottom Right */
 
-    /* FIX 2: MOLE ALIGNMENT - HARD GPU CLIPPING Wrapper */
-    .clipping-wrapper {
+    /* HARD GPU CLIPPING WRAPPER FOR MOLE */
+    .mound-wrapper {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      overflow: hidden; /* Clips standard pixels */
-      clip-path: inset(0 0 0 0); /* Forces clipping on hardware composite layer */
+      overflow: hidden;
+      clip-path: inset(0 0 0 0); /* Enforces strict layer boundary */
     }
 
-    /* Dirt Hole Mound - sits in front of mole body */
+    /* Dirt Hole Mound - Forefront layer */
     .hole-mound {
       position: absolute;
       bottom: 0;
       width: 100%;
-      height: 44px;
+      height: 42px;
       background: radial-gradient(ellipse at center, #5C3D2E 0%, #3D2314 100%);
       border-radius: 50%;
       box-shadow: inset 0 8px 12px rgba(0,0,0,0.8), 0 4px 0 #2D6A4F;
@@ -223,17 +281,17 @@
     /* MOLE CHARACTER */
     .mole {
       position: absolute;
-      bottom: -180px; /* BURIED DEEP DOWN (完全埋藏) */
-      left: 28px;
+      bottom: -180px;
+      left: 23px;
       width: 74px;
-      height: 105px;
+      height: 100px;
       background: linear-gradient(to right, #8D6E63, #5D4037);
       border-radius: 37px 37px 12px 12px;
-      opacity: 0; /* Fully hidden failsafe */
-      pointer-events: none; /* Can't be clicked underground */
+      opacity: 0; /* FAILSAFE 1: Zero opacity when buried */
+      pointer-events: none; /* FAILSAFE 2: Unclickable when buried */
       transform: translateY(0);
-      transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease;
-      z-index: 1; /* Behind mound */
+      transition: transform 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.15s ease;
+      z-index: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -241,45 +299,55 @@
       box-shadow: inset -5px -4px 0 rgba(0,0,0,0.3);
     }
 
-    /* POP-UP STATE - RISES HIGH ENOUGH FOR FULL CLEARANCE */
+    /* POP-UP STATE */
     .mole.up {
-      transform: translateY(-235px); /* Cleanly rises above dirt rim */
-      opacity: 1;
+      transform: translateY(-205px);
+      opacity: 1; /* Appears only during pop up */
       pointer-events: auto;
     }
 
-    /* FIX 3: Clearly shows Picture Card - LARGE & FLOATING HIGH */
+    /* MOLE EARS */
+    .mole-ear {
+      position: absolute;
+      top: 10px;
+      width: 12px;
+      height: 14px;
+      background: #D7CCC8;
+      border-radius: 50%;
+      border: 2px solid #5D4037;
+    }
+    .mole-ear.left { left: -3px; }
+    .mole-ear.right { right: -3px; }
+
+    /* PICTURE SIGN FLOATING HIGH ABOVE HEAD */
     .mole-card {
       position: absolute;
-      top: -100px; /* Elevation way above head (眼睛以上) */
-      width: 76px;  /* Enlarged so pictures are not squeezed */
-      height: 76px; /* Square shape handles all aspect ratios cleanly */
+      top: -82px;
+      width: 64px;
+      height: 64px;
       background: white;
       border: 3.5px solid var(--primary);
-      border-radius: 14px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       box-shadow: 0 6px 14px rgba(0,0,0,0.3);
       z-index: 5;
-      padding: 4px;
-      box-sizing: border-box;
     }
 
     .mole-stick {
       position: absolute;
-      top: -26px;
+      top: -20px;
       width: 5px;
-      height: 30px;
+      height: 22px;
       background: #8D5B4C;
       border-radius: 2px;
     }
 
     .mole-img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain; /* Entire picture visible without cropping */
-      display: block;
+      width: 86%;
+      height: 86%;
+      object-fit: contain;
     }
 
     /* FACIAL FEATURES */
@@ -355,10 +423,10 @@
       border: 1px solid #D4A373;
     }
 
-    /* Whack Pop-up feedback FX */
+    /* Whack FX */
     .hit-fx {
       position: absolute;
-      top: -55px;
+      top: -45px;
       font-size: 1.8rem;
       font-weight: bold;
       pointer-events: none;
@@ -422,23 +490,40 @@
   <!-- Game Controls Bar -->
   <div id="game-controls" class="game-controls hidden">
     <button id="reset-btn" style="width: auto; padding: 6px 16px; font-size: 0.9rem;">← 返回設定 Setup</button>
-    <div class="score-badge">目標量詞: <span id="target-display" style="color:#2D6A4F;">-</span></div>
+    <div class="score-badge">目標量詞: <span id="target-display" style="color:#276749;">-</span></div>
     <div class="score-badge">得分: <span id="score-display" style="color:var(--primary);">0</span></div>
-    <div class="score-badge">剩餘時間: <span id="timer-display" style="color:var(--accent);">45</span>s</div>
+    <div class="score-badge">剩餘時間: <span id="timer-display" style="color:var(--accent);">30</span>s</div>
   </div>
 
-  <!-- Game FieldContainer -->
+  <!-- Detailed Farm Field Container -->
   <div id="game-container" class="game-container hidden">
     <div class="sun"></div>
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+
+    <div class="mountain mt-1"></div>
+    <div class="mountain mt-2"></div>
+
     <div class="hill-back"></div>
     <div class="hill-front"></div>
+
+    <div class="fence-bar"></div>
+    <div class="fence-bar lower"></div>
+    <div class="fence-container">
+      <div class="picket"></div><div class="picket"></div>
+      <div class="picket"></div><div class="picket"></div>
+      <div class="picket"></div><div class="picket"></div>
+      <div class="picket"></div><div class="picket"></div>
+    </div>
+
     <div class="flower fl-1"></div>
     <div class="flower fl-2"></div>
     <div class="flower fl-3"></div>
+    <div class="flower fl-4"></div>
 
     <!-- 5 Organic Scattered Hole Spots -->
     <div class="mole-spot spot-0">
-      <div class="clipping-wrapper">
+      <div class="mound-wrapper">
         <div class="mole" id="mole-0">
           <div class="mole-ear left"></div><div class="mole-ear right"></div>
           <div class="mole-card"><img src="" class="mole-img" id="img-0" alt=""></div>
@@ -453,7 +538,7 @@
     </div>
 
     <div class="mole-spot spot-1">
-      <div class="clipping-wrapper">
+      <div class="mound-wrapper">
         <div class="mole" id="mole-1">
           <div class="mole-ear left"></div><div class="mole-ear right"></div>
           <div class="mole-card"><img src="" class="mole-img" id="img-1" alt=""></div>
@@ -468,7 +553,7 @@
     </div>
 
     <div class="mole-spot spot-2">
-      <div class="clipping-wrapper">
+      <div class="mound-wrapper">
         <div class="mole" id="mole-2">
           <div class="mole-ear left"></div><div class="mole-ear right"></div>
           <div class="mole-card"><img src="" class="mole-img" id="img-2" alt=""></div>
@@ -483,7 +568,7 @@
     </div>
 
     <div class="mole-spot spot-3">
-      <div class="clipping-wrapper">
+      <div class="mound-wrapper">
         <div class="mole" id="mole-3">
           <div class="mole-ear left"></div><div class="mole-ear right"></div>
           <div class="mole-card"><img src="" class="mole-img" id="img-3" alt=""></div>
@@ -498,7 +583,7 @@
     </div>
 
     <div class="mole-spot spot-4">
-      <div class="clipping-wrapper">
+      <div class="mound-wrapper">
         <div class="mole" id="mole-4">
           <div class="mole-ear left"></div><div class="mole-ear right"></div>
           <div class="mole-card"><img src="" class="mole-img" id="img-4" alt=""></div>
@@ -516,7 +601,7 @@
   <!-- Performance Data Tracker Panel -->
   <div id="tracker-panel" class="tracker-panel hidden">
     <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #BBF7D0; padding-bottom:8px; margin-bottom:14px;">
-      <h2 style="margin:0; font-size:1.25rem; color:#2D6A4F;">紀錄面板 (Data Tracker)</h2>
+      <h2 style="margin:0; font-size:1.25rem; color:#276749;">紀錄面板 (Data Tracker)</h2>
       <button id="export-img-btn" style="width:auto; padding:6px 14px; font-size:0.85rem; background:#276749;">📷 匯出紀錄圖片 (Export Image)</button>
     </div>
 
@@ -529,7 +614,6 @@
   </div>
 
   <script>
-    // FULL VERIFIED STABLE DATABASE
     const itemsDatabase = {
       '個': [
         { name: '蘋果', img: 'https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.png' },
@@ -615,7 +699,7 @@
 
     let targetClassifier = '個';
     let score = 0;
-    let timeLeft = 45;
+    let timeLeft = 30;
     let timerInterval = null;
     let moleSequence = [];
     let currentMoleIndex = 0;
@@ -655,7 +739,7 @@
       targetClassifier = selectedRadio ? selectedRadio.value : '個';
 
       score = 0;
-      timeLeft = 45;
+      timeLeft = 30;
       targetWhacks = 0;
       distractorWhacks = 0;
       totalTargetsSpawned = 0;
@@ -663,7 +747,7 @@
 
       targetDisplay.textContent = targetClassifier;
       scoreDisplay.textContent = '0';
-      timerDisplay.textContent = '45';
+      timerDisplay.textContent = '30';
 
       moleSequence = generateMolePool(targetClassifier);
 
@@ -723,12 +807,14 @@
       const moleElem = document.getElementById(`mole-${randomSpotIdx}`);
       const imgElem = document.getElementById(`img-${randomSpotIdx}`);
 
+      // 1. Swap picture while invisible/buried
       imgElem.src = moleData.img;
       moleElem.dataset.isTarget = moleData.isTarget;
       moleElem.dataset.whacked = 'false';
 
       if (moleData.isTarget) totalTargetsSpawned++;
 
+      // 2. Pop up smoothly
       setTimeout(() => {
         moleElem.classList.add('up');
       }, 50);
@@ -736,8 +822,8 @@
       activeMoleTimeout = setTimeout(() => {
         moleElem.classList.remove('up');
         currentMoleIndex++;
-        setTimeout(spawnNextMole, 800);
-      }, 3200);
+        setTimeout(spawnNextMole, 450);
+      }, 1850);
     }
 
     function whackMole(spotIdx, event) {
@@ -762,7 +848,7 @@
       moleElem.classList.remove('up');
       currentMoleIndex++;
 
-      setTimeout(spawnNextMole, 600);
+      setTimeout(spawnNextMole, 400);
     }
 
     function showHitFX(spotIdx, text, type) {
