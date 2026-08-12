@@ -103,7 +103,7 @@
       position: relative;
       width: 100%;
       max-width: 640px;
-      height: 460px;
+      height: 480px;
       background: linear-gradient(to bottom, #90E0EF 0%, #CAF0F8 30%, #D8F3DC 55%, #74C69D 100%);
       border-radius: 20px;
       border: 6px solid #52B788;
@@ -225,16 +225,16 @@
     /* ORGANIC SCATTERED MOLE SPOTS */
     .mole-spot {
       position: absolute;
-      width: 120px;
-      height: 180px;
+      width: 130px;
+      height: 200px;
     }
 
     /* Asymmetric Natural Placement */
-    .spot-0 { top: 150px; left: 6%; z-index: 5; }    /* Top Left */
-    .spot-1 { top: 140px; right: 12%; z-index: 5; }  /* Top Right */
-    .spot-2 { top: 215px; left: 38%; z-index: 6; }   /* Center Mid */
-    .spot-3 { top: 265px; left: 12%; z-index: 7; }   /* Bottom Left */
-    .spot-4 { top: 275px; right: 16%; z-index: 7; }  /* Bottom Right */
+    .spot-0 { top: 150px; left: 5%; z-index: 5; }    /* Top Left */
+    .spot-1 { top: 140px; right: 10%; z-index: 5; }  /* Top Right */
+    .spot-2 { top: 220px; left: 37%; z-index: 6; }   /* Center Mid */
+    .spot-3 { top: 275px; left: 10%; z-index: 7; }   /* Bottom Left */
+    .spot-4 { top: 285px; right: 14%; z-index: 7; }  /* Bottom Right */
 
     /* HARD GPU CLIPPING WRAPPER FOR MOLE */
     .mound-wrapper {
@@ -244,15 +244,15 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      clip-path: inset(0 0 0 0); /* Enforces strict layer boundary */
+      clip-path: inset(0 0 0 0);
     }
 
-    /* Dirt Hole Mound - Forefront layer */
+    /* Dirt Hole Mound */
     .hole-mound {
       position: absolute;
       bottom: 0;
       width: 100%;
-      height: 42px;
+      height: 44px;
       background: radial-gradient(ellipse at center, #5C3D2E 0%, #3D2314 100%);
       border-radius: 50%;
       box-shadow: inset 0 8px 12px rgba(0,0,0,0.8), 0 4px 0 #2D6A4F;
@@ -281,16 +281,16 @@
     /* MOLE CHARACTER */
     .mole {
       position: absolute;
-      bottom: -180px;
-      left: 23px;
+      bottom: -200px;
+      left: 28px;
       width: 74px;
-      height: 100px;
+      height: 105px;
       background: linear-gradient(to right, #8D6E63, #5D4037);
       border-radius: 37px 37px 12px 12px;
-      opacity: 0; /* FAILSAFE 1: Zero opacity when buried */
-      pointer-events: none; /* FAILSAFE 2: Unclickable when buried */
+      opacity: 0;
+      pointer-events: none;
       transform: translateY(0);
-      transition: transform 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.15s ease;
+      transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease;
       z-index: 1;
       display: flex;
       flex-direction: column;
@@ -301,8 +301,8 @@
 
     /* POP-UP STATE */
     .mole.up {
-      transform: translateY(-205px);
-      opacity: 1; /* Appears only during pop up */
+      transform: translateY(-235px);
+      opacity: 1;
       pointer-events: auto;
     }
 
@@ -319,35 +319,39 @@
     .mole-ear.left { left: -3px; }
     .mole-ear.right { right: -3px; }
 
-    /* PICTURE SIGN FLOATING HIGH ABOVE HEAD */
+    /* EXPANDED PICTURE CARD FOR COMPLETE UNCLIPPED IMAGES */
     .mole-card {
       position: absolute;
-      top: -82px;
-      width: 64px;
-      height: 64px;
+      top: -90px;
+      width: 72px;  /* Enlarged so pictures are not squeezed */
+      height: 72px; /* Square shape guarantees 1:1 image ratio */
       background: white;
       border: 3.5px solid var(--primary);
-      border-radius: 12px;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
       box-shadow: 0 6px 14px rgba(0,0,0,0.3);
       z-index: 5;
+      padding: 4px;
+      box-sizing: border-box;
     }
 
     .mole-stick {
       position: absolute;
-      top: -20px;
+      top: -22px;
       width: 5px;
-      height: 22px;
+      height: 24px;
       background: #8D5B4C;
       border-radius: 2px;
     }
 
+    /* PROPER CONTAINMENT SO NO PART OF IMAGE IS CUT OFF */
     .mole-img {
-      width: 86%;
-      height: 86%;
-      object-fit: contain;
+      width: 100%;
+      height: 100%;
+      object-fit: contain; /* ENTIRE IMAGE IS VISIBLE WITHOUT CUTTING */
+      display: block;
     }
 
     /* FACIAL FEATURES */
@@ -492,7 +496,7 @@
     <button id="reset-btn" style="width: auto; padding: 6px 16px; font-size: 0.9rem;">← 返回設定 Setup</button>
     <div class="score-badge">目標量詞: <span id="target-display" style="color:#276749;">-</span></div>
     <div class="score-badge">得分: <span id="score-display" style="color:var(--primary);">0</span></div>
-    <div class="score-badge">剩餘時間: <span id="timer-display" style="color:var(--accent);">30</span>s</div>
+    <div class="score-badge">剩餘時間: <span id="timer-display" style="color:var(--accent);">45</span>s</div>
   </div>
 
   <!-- Detailed Farm Field Container -->
@@ -699,7 +703,7 @@
 
     let targetClassifier = '個';
     let score = 0;
-    let timeLeft = 30;
+    let timeLeft = 45; // Extended timer for comfortable gameplay
     let timerInterval = null;
     let moleSequence = [];
     let currentMoleIndex = 0;
@@ -739,7 +743,7 @@
       targetClassifier = selectedRadio ? selectedRadio.value : '個';
 
       score = 0;
-      timeLeft = 30;
+      timeLeft = 45;
       targetWhacks = 0;
       distractorWhacks = 0;
       totalTargetsSpawned = 0;
@@ -747,7 +751,7 @@
 
       targetDisplay.textContent = targetClassifier;
       scoreDisplay.textContent = '0';
-      timerDisplay.textContent = '30';
+      timerDisplay.textContent = '45';
 
       moleSequence = generateMolePool(targetClassifier);
 
@@ -807,23 +811,25 @@
       const moleElem = document.getElementById(`mole-${randomSpotIdx}`);
       const imgElem = document.getElementById(`img-${randomSpotIdx}`);
 
-      // 1. Swap picture while invisible/buried
+      // 1. Load image cleanly while subterranean
       imgElem.src = moleData.img;
       moleElem.dataset.isTarget = moleData.isTarget;
       moleElem.dataset.whacked = 'false';
 
       if (moleData.isTarget) totalTargetsSpawned++;
 
-      // 2. Pop up smoothly
+      // 2. Pop up animation trigger
       setTimeout(() => {
         moleElem.classList.add('up');
       }, 50);
 
+      // 3. SLOWER DISPLAY TIMING: 3200ms (3.2 seconds) on screen
       activeMoleTimeout = setTimeout(() => {
         moleElem.classList.remove('up');
         currentMoleIndex++;
-        setTimeout(spawnNextMole, 450);
-      }, 1850);
+        // 800ms comfortable pause before the next mole spawns
+        setTimeout(spawnNextMole, 800);
+      }, 3200);
     }
 
     function whackMole(spotIdx, event) {
@@ -848,7 +854,7 @@
       moleElem.classList.remove('up');
       currentMoleIndex++;
 
-      setTimeout(spawnNextMole, 400);
+      setTimeout(spawnNextMole, 600);
     }
 
     function showHitFX(spotIdx, text, type) {
