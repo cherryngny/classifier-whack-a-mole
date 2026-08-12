@@ -103,7 +103,7 @@
       position: relative;
       width: 100%;
       max-width: 640px;
-      height: 480px;
+      height: 500px;
       background: linear-gradient(to bottom, #90E0EF 0%, #CAF0F8 30%, #D8F3DC 55%, #74C69D 100%);
       border-radius: 20px;
       border: 6px solid #52B788;
@@ -138,7 +138,7 @@
     /* Mountain Silhouettes */
     .mountain {
       position: absolute;
-      bottom: 240px;
+      bottom: 260px;
       border-left: 90px solid transparent;
       border-right: 90px solid transparent;
       border-bottom: 80px solid #95D5B2;
@@ -149,7 +149,7 @@
     /* Layered Rolling Hills Background */
     .hill-back {
       position: absolute;
-      top: 140px;
+      top: 160px;
       left: -40px;
       width: 720px;
       height: 140px;
@@ -159,7 +159,7 @@
 
     .hill-front {
       position: absolute;
-      top: 175px;
+      top: 195px;
       right: -50px;
       width: 740px;
       height: 160px;
@@ -170,17 +170,17 @@
     /* Wooden Fence */
     .fence-bar {
       position: absolute;
-      top: 140px;
+      top: 160px;
       width: 100%;
       height: 6px;
       background: #A0522D;
       box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
-    .fence-bar.lower { top: 154px; }
+    .fence-bar.lower { top: 174px; }
 
     .fence-container {
       position: absolute;
-      top: 125px;
+      top: 145px;
       width: 100%;
       height: 45px;
       display: flex;
@@ -217,24 +217,24 @@
       box-shadow: 0 0 0 3px #FFD166;
       z-index: 2;
     }
-    .fl-1 { top: 290px; left: 5%; }
-    .fl-2 { top: 240px; left: 48%; }
-    .fl-3 { top: 390px; right: 6%; }
-    .fl-4 { top: 410px; left: 42%; box-shadow: 0 0 0 3px #FF85A1; }
+    .fl-1 { top: 310px; left: 5%; }
+    .fl-2 { top: 260px; left: 48%; }
+    .fl-3 { top: 410px; right: 6%; }
+    .fl-4 { top: 430px; left: 42%; box-shadow: 0 0 0 3px #FF85A1; }
 
     /* ORGANIC SCATTERED MOLE SPOTS */
     .mole-spot {
       position: absolute;
-      width: 130px;
-      height: 200px;
+      width: 140px;
+      height: 250px;
     }
 
     /* Asymmetric Natural Placement */
-    .spot-0 { top: 150px; left: 5%; z-index: 5; }    /* Top Left */
-    .spot-1 { top: 140px; right: 10%; z-index: 5; }  /* Top Right */
-    .spot-2 { top: 220px; left: 37%; z-index: 6; }   /* Center Mid */
-    .spot-3 { top: 275px; left: 10%; z-index: 7; }   /* Bottom Left */
-    .spot-4 { top: 285px; right: 14%; z-index: 7; }  /* Bottom Right */
+    .spot-0 { top: 170px; left: 5%; z-index: 5; }    /* Top Left */
+    .spot-1 { top: 160px; right: 8%; z-index: 5; }   /* Top Right */
+    .spot-2 { top: 240px; left: 36%; z-index: 6; }   /* Center Mid */
+    .spot-3 { top: 295px; left: 10%; z-index: 7; }   /* Bottom Left */
+    .spot-4 { top: 305px; right: 12%; z-index: 7; }  /* Bottom Right */
 
     /* HARD GPU CLIPPING WRAPPER FOR MOLE */
     .mound-wrapper {
@@ -281,8 +281,8 @@
     /* MOLE CHARACTER */
     .mole {
       position: absolute;
-      bottom: -200px;
-      left: 28px;
+      bottom: -220px;
+      left: 33px;
       width: 74px;
       height: 105px;
       background: linear-gradient(to right, #8D6E63, #5D4037);
@@ -299,9 +299,9 @@
       box-shadow: inset -5px -4px 0 rgba(0,0,0,0.3);
     }
 
-    /* POP-UP STATE */
+    /* POP-UP STATE: RISES HIGH ENOUGH SO GROUND NEVER BLOCKS PICTURE */
     .mole.up {
-      transform: translateY(-235px);
+      transform: translateY(-275px);
       opacity: 1;
       pointer-events: auto;
     }
@@ -319,12 +319,12 @@
     .mole-ear.left { left: -3px; }
     .mole-ear.right { right: -3px; }
 
-    /* EXPANDED PICTURE CARD FOR COMPLETE UNCLIPPED IMAGES */
+    /* FLOATING CARD - SHIFTED HIGH ABOVE HEAD FOR FULL CLEARANCE */
     .mole-card {
       position: absolute;
-      top: -90px;
-      width: 72px;  /* Enlarged so pictures are not squeezed */
-      height: 72px; /* Square shape guarantees 1:1 image ratio */
+      top: -100px;
+      width: 76px;
+      height: 76px;
       background: white;
       border: 3.5px solid var(--primary);
       border-radius: 14px;
@@ -339,18 +339,17 @@
 
     .mole-stick {
       position: absolute;
-      top: -22px;
+      top: -26px;
       width: 5px;
-      height: 24px;
+      height: 30px;
       background: #8D5B4C;
       border-radius: 2px;
     }
 
-    /* PROPER CONTAINMENT SO NO PART OF IMAGE IS CUT OFF */
     .mole-img {
       width: 100%;
       height: 100%;
-      object-fit: contain; /* ENTIRE IMAGE IS VISIBLE WITHOUT CUTTING */
+      object-fit: contain;
       display: block;
     }
 
@@ -430,7 +429,7 @@
     /* Whack FX */
     .hit-fx {
       position: absolute;
-      top: -45px;
+      top: -55px;
       font-size: 1.8rem;
       font-weight: bold;
       pointer-events: none;
@@ -703,7 +702,7 @@
 
     let targetClassifier = '個';
     let score = 0;
-    let timeLeft = 45; // Extended timer for comfortable gameplay
+    let timeLeft = 45;
     let timerInterval = null;
     let moleSequence = [];
     let currentMoleIndex = 0;
@@ -811,23 +810,19 @@
       const moleElem = document.getElementById(`mole-${randomSpotIdx}`);
       const imgElem = document.getElementById(`img-${randomSpotIdx}`);
 
-      // 1. Load image cleanly while subterranean
       imgElem.src = moleData.img;
       moleElem.dataset.isTarget = moleData.isTarget;
       moleElem.dataset.whacked = 'false';
 
       if (moleData.isTarget) totalTargetsSpawned++;
 
-      // 2. Pop up animation trigger
       setTimeout(() => {
         moleElem.classList.add('up');
       }, 50);
 
-      // 3. SLOWER DISPLAY TIMING: 3200ms (3.2 seconds) on screen
       activeMoleTimeout = setTimeout(() => {
         moleElem.classList.remove('up');
         currentMoleIndex++;
-        // 800ms comfortable pause before the next mole spawns
         setTimeout(spawnNextMole, 800);
       }, 3200);
     }
