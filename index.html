@@ -15,7 +15,7 @@
     }
 
     body {
-      font-family: "PingFang HK", "Microsoft JhengHei", -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: "PingFang HK", "Microsoft JhengHei", -apple-system, BlinkMacSystemFont, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
       background-color: #F4F7F6;
       color: var(--text);
       margin: 0;
@@ -100,7 +100,7 @@
 
     button:hover { background: #2D6A4F; }
 
-    /* Farm Game Environment Container */
+    /* Game Environment */
     .game-container {
       position: relative;
       width: 100%;
@@ -114,7 +114,7 @@
       margin-bottom: 15px;
     }
 
-    /* Scattered Mole Holes Layout */
+    /* Scattered Mole Spots */
     .mole-spot {
       position: absolute;
       width: 140px;
@@ -133,8 +133,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      overflow: hidden; 
-      clip-path: inset(0 0 0 0); 
+      overflow: hidden;
     }
 
     .hole-mound {
@@ -167,7 +166,7 @@
     .grass-tuft::before { left: 8px; width: 7px; height: 16px; transform: rotate(-20deg); }
     .grass-tuft::after { right: 10px; width: 7px; height: 18px; transform: rotate(20deg); }
 
-    /* MOLE CHARACTER */
+    /* Mole & Card Styling */
     .mole {
       position: absolute;
       bottom: -200px;
@@ -177,7 +176,7 @@
       background: linear-gradient(to right, #8D6E63, #5D4037);
       border-radius: 37px 37px 12px 12px;
       opacity: 0;
-      pointer-events: none; 
+      pointer-events: none;
       transform: translateY(0);
       transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease;
       z-index: 1;
@@ -201,14 +200,14 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      z-index: 15; /* HIGHER than mound (z:10) to bring sign to front */
+      z-index: 15;
       pointer-events: none;
     }
 
     .mole-card {
       width: 76px;
       height: 76px;
-      background: white;
+      background: #FFFFFF;
       border: 3.5px solid var(--primary);
       border-radius: 14px;
       display: flex;
@@ -219,6 +218,7 @@
       padding: 2px;
       box-sizing: border-box;
       pointer-events: auto;
+      overflow: hidden;
     }
 
     .mole-stick {
@@ -230,22 +230,27 @@
     }
 
     .mole-emoji-box {
-      font-size: 2.2rem;
-      line-height: 1;
-      height: 42px;
+      font-size: 2rem;
+      line-height: 1.1;
+      width: 100%;
+      height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
+      text-align: center;
+      font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
     }
 
     .mole-label {
       font-size: 0.8rem;
       font-weight: bold;
       color: #2D3748;
-      margin-top: 1px;
+      margin-top: 2px;
+      text-align: center;
+      white-space: nowrap;
     }
 
-    /* FACIAL FEATURES */
+    /* Face Details */
     .mole-ear {
       position: absolute;
       top: 10px;
@@ -307,7 +312,7 @@
       top: 2px;
     }
 
-    /* Whack FX */
+    /* Hit FX */
     .hit-fx {
       position: absolute;
       top: -115px;
@@ -325,7 +330,7 @@
       100% { opacity: 0; transform: translateY(-35px) scale(1.3); }
     }
 
-    /* Scoreboard & Controls */
+    /* Scoreboard */
     .game-controls {
       display: flex;
       justify-content: space-between;
@@ -379,16 +384,15 @@
     <div class="score-badge">剩餘時間: <span id="timer-display" style="color:var(--accent);">45</span>s</div>
   </div>
 
-  <!-- Game Field Container -->
+  <!-- Game Field -->
   <div id="game-container" class="game-container hidden">
-    <!-- 5 Scattered Mole Holes -->
     <div class="mole-spot spot-0">
       <div class="clipping-wrapper">
         <div class="mole" id="mole-0">
           <div class="mole-card-wrapper">
             <div class="mole-card">
-              <div class="mole-emoji-box" id="emoji-0">🍎</div>
-              <div class="mole-label" id="label-0">蘋果</div>
+              <div class="mole-emoji-box" id="emoji-0">🫧</div>
+              <div class="mole-label" id="label-0">泡泡</div>
             </div>
             <div class="mole-stick"></div>
           </div>
@@ -425,7 +429,7 @@
         <div class="mole" id="mole-2">
           <div class="mole-card-wrapper">
             <div class="mole-card">
-              <div class="mole-emoji-box" id="emoji-2">🍰</div>
+              <div class="mole-emoji-box" id="emoji-2">🎂</div>
               <div class="mole-label" id="label-2">蛋糕</div>
             </div>
             <div class="mole-stick"></div>
@@ -494,7 +498,6 @@
   </div>
 
   <script>
-    // Bulletproof Emoji Database
     const itemsDatabase = {
       '個': [
         { name: '泡泡', icon: '🫧' },
@@ -503,8 +506,8 @@
         { name: '波', icon: '⚽' },
         { name: '漢堡包', icon: '🍔' },
         { name: '鐘', icon: '⏰' },
-        { name: '醫生', icon: '🧑🏻‍⚕️' },
-        { name: '廚師', icon: '🧑🏻‍🍳' }
+        { name: '醫生', icon: '👨‍⚕️' },
+        { name: '廚師', icon: '👨‍🍳' }
       ],
       '條': [
         { name: '魚', icon: '🐟' },
@@ -518,10 +521,8 @@
       ],
       '件': [
         { name: '衫', icon: '👕' },
-        { name: '衫', icon: '👚' },
-        { name: '袍', icon: '🥼' },
-        { name: '背心', icon: '🦺' },
         { name: '外套', icon: '🧥' },
+        { name: '背心', icon: '🦺' },
         { name: '泳衣', icon: '🩱' }
       ],
       '隻': [
@@ -556,7 +557,6 @@
         { name: '櫈', icon: '🪑' },
         { name: '床', icon: '🛏️' },
         { name: '梳化', icon: '🛋️' },
-        { name: '卡', icon: '🪪' },
         { name: '卡片', icon: '💳' }
       ],
       '塊': [
@@ -569,7 +569,6 @@
       ]
     };
 
-    // Game State
     let targetClassifier = '個';
     let score = 0;
     let timeLeft = 45;
@@ -578,7 +577,6 @@
     let activeMoles = {};
     let trackedSessionData = {};
 
-    // DOM Elements
     const setupPanel = document.getElementById('setup-panel');
     const gameControls = document.getElementById('game-controls');
     const gameContainer = document.getElementById('game-container');
@@ -592,7 +590,6 @@
     const summaryBox = document.getElementById('summary-box');
     const childNameInput = document.getElementById('child-name');
 
-    // Radio option setup
     const radioLabels = document.querySelectorAll('#classifier-options .radio-btn');
     radioLabels.forEach(label => {
       label.addEventListener('click', () => {
@@ -608,7 +605,6 @@
     resetBtn.addEventListener('click', stopAndResetToSetup);
     exportImgBtn.addEventListener('click', exportTrackerAsImage);
 
-    // Attach Mole Listeners
     for (let i = 0; i < 5; i++) {
       const moleElem = document.getElementById(`mole-${i}`);
       moleElem.addEventListener('click', () => whackMole(i));
@@ -631,7 +627,6 @@
 
       summaryBox.innerHTML = '🎮 遊戲進行中... (In Progress)';
 
-      // Countdown Timer
       gameTimer = setInterval(() => {
         timeLeft--;
         timerDisplay.textContent = timeLeft;
