@@ -724,6 +724,9 @@
       ]
     };
 
+    // Constant: Exact 3 seconds stay time for all moles
+    const MOLE_POPUP_DURATION = 3000; 
+
     // State Variables
     let targetClassifier = '個';
     let score = 0;
@@ -733,8 +736,9 @@
     let wrongItemsList = [];
     let timeLeft = 30;
     let gameTimer = null;
-    let moleTimer = null;
+    let moleLoopTimer = null;
     let activeMoles = {}; 
+    let moleTimeoutIds = {}; 
 
     // UI Elements
     const setupPanel = document.getElementById('setup-panel');
@@ -789,6 +793,14 @@
       timeLeft = 30;
       activeMoles = {};
 
+      // Clear any pending mole timeouts
+      for (let i = 0; i < 5; i++) {
+        if (moleTimeoutIds[i]) {
+          clearTimeout(moleTimeoutIds[i]);
+          delete moleTimeoutIds[i];
+        }
+      }
+
       // Update UI Views
       setupPanel.classList.add('hidden');
       gameControls.classList.remove('hidden');
@@ -834,16 +846,18 @@
 
         moleEl.classList.add('up');
 
-        // Extended appearing time: 2000ms (2 seconds)
-        setTimeout(() => {
+        // Each mole gets a strict 3000ms timer
+        moleTimeoutIds[index] = setTimeout(() => {
           if (moleEl.classList.contains('up')) {
             moleEl.classList.remove('up');
+            delete activeMoles[index];
           }
-        }, 2000);
+          delete moleTimeoutIds[index];
+        }, MOLE_POPUP_DURATION);
       }
 
       const nextInterval = Math.floor(Math.random() * 600) + 600;
-      moleTimer = setTimeout(moleLoop, nextInterval);
+      moleLoopTimer = setTimeout(moleLoop, nextInterval);
     }
 
     // Attach click handlers to moles
@@ -855,6 +869,12 @@
     function handleMoleClick(index) {
       const moleEl = document.getElementById(`mole-${index}`);
       if (!moleEl.classList.contains('up')) return;
+
+      // Clear the 3-second auto-retract timer since player whacked it
+      if (moleTimeoutIds[index]) {
+        clearTimeout(moleTimeoutIds[index]);
+        delete moleTimeoutIds[index];
+      }
 
       moleEl.classList.remove('up');
       const item = activeMoles[index];
@@ -889,9 +909,13 @@
 
     function endGame() {
       clearInterval(gameTimer);
-      clearTimeout(moleTimer);
+      clearTimeout(moleLoopTimer);
 
       for (let i = 0; i < 5; i++) {
+        if (moleTimeoutIds[i]) {
+          clearTimeout(moleTimeoutIds[i]);
+          delete moleTimeoutIds[i];
+        }
         document.getElementById(`mole-${i}`).classList.remove('up');
       }
 
@@ -918,7 +942,14 @@
 
     function resetToSetup() {
       clearInterval(gameTimer);
-      clearTimeout(moleTimer);
+      clearTimeout(moleLoopTimer);
+
+      for (let i = 0; i < 5; i++) {
+        if (moleTimeoutIds[i]) {
+          clearTimeout(moleTimeoutIds[i]);
+          delete moleTimeoutIds[i];
+        }
+      }
 
       setupPanel.classList.remove('hidden');
       gameControls.classList.add('hidden');
