@@ -98,7 +98,7 @@
 
     button:hover { background: #1D4ED8; }
 
-    /* DETAILED FARMLAND ENVIRONMENT CONTAINER */
+    /* FARMLAND ENVIRONMENT CONTAINER */
     .game-container {
       position: relative;
       width: 100%;
@@ -222,19 +222,20 @@
     .fl-3 { top: 390px; right: 6%; }
     .fl-4 { top: 410px; left: 42%; box-shadow: 0 0 0 3px #FF85A1; }
 
-    /* ORGANIC SCATTERED MOLE SPOTS (NON-GRID) */
+    /* ORGANIC SCATTERED MOLE SPOTS WITH HIDE MASK */
     .mole-spot {
       position: absolute;
       width: 110px;
-      height: 120px;
+      height: 180px; /* Taller viewport to accommodate card + mole rising */
+      overflow: hidden; /* CLIPS the mole completely below the hole */
     }
 
     /* Asymmetric Natural Placement */
-    .spot-0 { top: 200px; left: 6%; z-index: 5; }    /* Top Left */
-    .spot-1 { top: 190px; right: 12%; z-index: 5; }  /* Top Right */
-    .spot-2 { top: 265px; left: 38%; z-index: 6; }   /* Center Mid */
-    .spot-3 { top: 325px; left: 12%; z-index: 7; }   /* Bottom Left */
-    .spot-4 { top: 335px; right: 16%; z-index: 7; }  /* Bottom Right */
+    .spot-0 { top: 140px; left: 6%; z-index: 5; }    /* Top Left */
+    .spot-1 { top: 130px; right: 12%; z-index: 5; }  /* Top Right */
+    .spot-2 { top: 205px; left: 38%; z-index: 6; }   /* Center Mid */
+    .spot-3 { top: 265px; left: 12%; z-index: 7; }   /* Bottom Left */
+    .spot-4 { top: 275px; right: 16%; z-index: 7; }  /* Bottom Right */
 
     /* Dirt Hole Mound */
     .hole-mound {
@@ -248,7 +249,6 @@
       z-index: 3;
     }
 
-    /* Dirt Clods Texture */
     .hole-mound::after {
       content: '';
       position: absolute;
@@ -279,10 +279,10 @@
     .grass-tuft::before { left: 8px; width: 7px; height: 16px; transform: rotate(-20deg); }
     .grass-tuft::after { right: 10px; width: 7px; height: 18px; transform: rotate(20deg); }
 
-    /* MOLE CHARACTER - TALLER BODY FOR FACE CLEARANCE */
+    /* MOLE CHARACTER - COMPLETELY HIDDEN IN INITIAL STATE */
     .mole {
       position: absolute;
-      bottom: 10px;
+      bottom: -120px; /* Pushed completely down out of sight */
       left: 18px;
       width: 74px;
       height: 100px;
@@ -298,7 +298,7 @@
     }
 
     .mole.up {
-      bottom: 30px;
+      bottom: 25px; /* Pops fully above the hole mound */
     }
 
     /* MOLE EARS */
@@ -423,7 +423,8 @@
     /* Whack FX (+1 / ✗) */
     .hit-fx {
       position: absolute;
-      top: -45px;
+      top: 20px;
+      left: 35px;
       font-size: 1.8rem;
       font-weight: bold;
       pointer-events: none;
@@ -635,7 +636,7 @@
         { name: '睡衣', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiHbWk09h1Noo2mtu96rMl57c4tUvoArj_n3Wvzd4lAv5lfeexWiP3TRWg58L1zu-Brluj4rKiSZ5wBnIgs0Kv6ixK7L5XTjRBl5kKhZf4CwjQJs8DU3HWpO6QnCSEkmHnpFrB-ZhbsL9yZ/s400/kid_kigae_girl.png' },
         { name: '泳衣', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjndTmGPjXBWHLHbmCbB-wr0orNkK-NtFspd3u9_qtqLRZb68So1f4C2XR1c03xQlJxTo2uqs9U-8u1PuQh2awzAVxNCnS6H12PEEU_-0q2PTK-2_7v_Zg8_GzWuvatpC_6WaHxgVYuZSUBUW_QqVB93uMUE2MZbrMHqTiBXE-NahZFV67RpaPBEB7tHQ/s1003/pool_mizugi_school_girl.png' },
         { name: '雨衣', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiXmN5T31SYm-N4hp1B8izjbAOarr4GLEnVN7kZsqa7MMpCoggVHmqisKU9Qo3zad_ldRERARwgjXuuq0D1VEYCvlIIcOb2bg33IVfVKCaSyM-6IJqIkwWoGM-H69ZeZuFi9KCdhRWOCtE/s400/fashion_raincoat_amagappa.png' },
-        { name: '襯衫', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjva8PWi8UzhQ-TJ6o4aiHG-nIOoTirNMVtU_NuYyxVst2Z5ZmxkErTYlmxbxkjlJxt2bDqxAYSB9zv59NQ4ntHQ7CPzkr3ynvZ3sXCni0_zTsVdhEoSrXFwMengyNaZsgrMNXlYj9wWB11/s742/fashion_shirt3_skyblue.png' },
+        { name: '衫', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjva8PWi8UzhQ-TJ6o4aiHG-nIOoTirNMVtU_NuYyxVst2Z5ZmxkErTYlmxbxkjlJxt2bDqxAYSB9zv59NQ4ntHQ7CPzkr3ynvZ3sXCni0_zTsVdhEoSrXFwMengyNaZsgrMNXlYj9wWB11/s742/fashion_shirt3_skyblue.png' },
         { name: '冷衫', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhPxUvo8wkIKkmglg4pkXQ8UbnnXrkHNYUTh5wISFj4JWjt69ySgAWv9zprV5NkwmiOWq8FvjQAtbtjWAtVPJ9_ZEHm88wT_0NaIwexRfS0XUNUhDJOUluf6OMJCqsQmAl97gNwdAh-NkY/s400/sweater_teami.png' }
       ],
       '隻': [
@@ -653,7 +654,9 @@
         { name: '提子', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh994bi67c6Zxa2BdJD9gdASA-t8QHAaOET1qC3nHwAr5Et4V-KU7sxo7LF0Y9FVNgkaHVSbIe7UWsloELmFDDTXE41YT7NeIQJk-Z7ivW2DNd8vigiwjI3I3u5qA9i3NZiPAanriNaaUgh/s400/fruit_slice12_grape.png' },
         { name: '草莓', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi16xaBrly6jqbVAhvgAWn-JdGhVIRXmatPCrcV8n742YEMOFnD6bq17TlSDPNZ-cSQEqXSrXlGKFkksGW0JL2CuRk1uHaC58YE2MKMfbeEoUDADcIUikvNVZ1LzeHQEG4EX3_eQ30kvoRm/s800/fruit_strawberry.png' },
         { name: '粟米', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjh2xOz6r7YuUq86JvnXVMclo8I9pzyNMxhrNZiOB-Mn4k1Kd0kgM-nzCDp3Jn1h6dG0XJLHAstSyNi-wrF7uf2mVGnZiW61W-41uO8p_ZQfzWnVFhj9p42KQiri2vGmnWwj4zyMNHqYvdZ/s400/vegetable_corn_hitotsubu.png' },
+        { name: '糖', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj6hPJjdh1Q77IiPGbptU0T9H2C-l03UZfT3uwXOPecmJBREkI06jhIXTbH9RqFCFcF2PneHmyUtSJUNVSchECEqwX5snlKz7DWhfwct2Zwjra1e1T97rJLuyD1NM3Ha9sujA5D_XOH_ZU/s180-c/cheese_candy.png' },
         { name: '藥丸', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj8f8Wfi8MnfT_9YbIWjGCGq2O9gCtVzwDNS3nU6iQvPLrvSmrUd5SNj5IKkSdYbFU6zip1LkVXuc4uLAv_IcKMca44EeCKrx5zcLzhkYIhuEY1BsayuGW4kAwFayb81BmmrG5hRzBqxyA/s800/kusuri_ippouka.png' },
+        { name: '寶石', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgvt_w-TRD1o0wtcjE7-3hMCxfFT0ASw4zTSr3eiFWH_OHjjodmUlyqB1JbqA6pyULeYUMCvp0wRySs5-HVITBtH-m4uUcqB2uwezvcC9pVJuAdjxYqrJXa_fInWsVGDIIrat-KgIK2JVw/s800/yubiwa_sapphire.png' },
         { name: '車厘子', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiPUlDm3hnIyepoASsLKtwz6tAIHp9r_NqmzAz8lxFpRUrLK_R5BY1b_HObQwtwOG10GnbZoHNcy2y6c9v9VdIzwkRgnoci8HxkSIIUBGe4xjLqPPxP0vWWy9Hsis-otExw7Q3ofK2b4hml/s150/furit_mark17_cherry.png' }
       ],
       '架': [
@@ -661,18 +664,30 @@
         { name: '飛機', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjZgtLYU9QNMwQvytfhVbhh77Q2s8e1vDL86KXfwtpLRl9XB-DiCBJE272uKgFzWR_5jazC14xm46WPeSfP7aNkSSlhJ95daYRT5eKfh_7xRfzXuQBN2C5svoqR_B_qwj2NOAfv7Ke2Na8u/w1200-h630-p-k-no-nu/private_jet.png' },
         { name: '單車', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgRcaunU41yVfjG1Bn-I_-8SxZHnENcrq8uJHNHVwsv4O1Lzyzrm2z79avRTJ0fdBRxz7Nkuhk-lwHZKTWTsZOKaM6hLs8pV5vWtXap_f4m-R5TAO9kJq5Ekps0T0RoDKzrN2K7BIWeLy50/s800/kids_bicycle06.png' },
         { name: '巴士', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjwZTo_BXEjqDFO2Nmu48sODb1uOjgcKsJuxGdTbW7yqVFW3gr8K8VP3iDaIKFjgOjSs228Soyky43UGkqeD3_f4OQ8LOaCh6s3c_f4i_MmanijAGbQzlj3VWZLst00AubHvhMAjz5InsnZ/s1600/car_nikaidate_bus_ireland.png' },
-        { name: '直升機', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhUA7NVOCanwiWfc6sDtG7xCdys_zkCIFFUB0tyao6UTfJMhx5NIxYlXiEHm1u4ODYuKJ47iYdeEaJpWMLfSkBjCLQtZn1tXihPOugB0_7yUQB7b-QzXPVlLu9swFDV7_rvqB3sUop78LRP/s800/helicopter.png' }
+        { name: '列車', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjY8NH9meSkt-xZ2hTgdKc2Y2SbRYcUXtmXMl7BhJBo6VXmHZVY1X0-le9djGmCl0OIoQJuj7BvXX1Y14di3S89eVvJi8Ffv2WFTkkO18xANbNwxtQUzuBg0SZZY-peMSfJzlnNDLw9THE/s540/shinkansen_e7_w7.png' },
+        { name: '直升機', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhUA7NVOCanwiWfc6sDtG7xCdys_zkCIFFUB0tyao6UTfJMhx5NIxYlXiEHm1u4ODYuKJ47iYdeEaJpWMLfSkBjCLQtZn1tXihPOugB0_7yUQB7b-QzXPVlLu9swFDV7_rvqB3sUop78LRP/s800/helicopter.png' },
+        { name: '消防車', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgZ7rwtkwm7RFoL2zrfVNuEScGgrqDphb0vzp_oqxNGRy-e4XRbrHsNlvQuzdRNSACEWAIN5th3nxYKefKnYZcf0CIlAf6CCnTmZzgJNn_ugjkXYAsfcQrioslsbDDXrEE5ztrzkKBxhGnR/s400/syoubousya_pump.png' },
+        { name: '警車', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjlOf6QS_VYnUwrYfFTNroovBUWTSSGyxWOW9hXI2YgWZQwNWvQWqpjRrwhIhcRfkYP-CHjsIc-xeEUPaWYvKPPyc88473R8DlWBM4mN_f3qkuCu7fRGs_x9gZ_hB5k_IiQPax4zNfEGYCS/s800/car_patocar_america.png' }
       ],
       '張': [
         { name: '紙巾', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjw8yn3qD8llFSs8T68GEk3lTROoyc6XCog_xggnlDgm3U5j1H0wrVkg-UZA8n2YA6dB181x4pB7dMvxBoorJ0U6WcHFIa_fyIsRRarCvHIqY62L_c1rW0LGp3y8WHcl9oIcPzAVcAw-zAL/s800/kagaku_kami_wesu.png' },
         { name: '櫈', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiZyrTkpr3LoNifVcXZ21kESg4o984PFyR-WVLrUyOoLXkBbjiNtl2OlRysoFgobwpJtYIKp17LnIkZP0B20ZKQu5JrM7_x-6hqgg_O2CLSs9HYxUuHoreuD_g97UtwicKViAveI9hhER/s800/gakkou_isu_chair.png' },
         { name: '床', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiIM6T9TDOABk07xBUqu_xfFycL4osB9ygEKpw7485Mk0BUNOiIX2wc3bhzEGNHD1rOkTN42FKLD90GmEsXfhLBOtJMubdK1qT7c8AcKLHpNJula5_9KWkbmWFhLaVaPGrHCz-1jnDdPw7Q/s800/kagu_bed.png' },
-        { name: '枱', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWOaYMwF9Nct4uORLXFPwdVx0xd8PUM2TNs6JaG6YtofUJlJ8_wDDYd_13gCPkhzCfpW2MkntHSR7dhAZE3SQ4ktVCaqQGNnYB-YRwnP5CJnHUbYeJ619r_Cil8V9auE8gWSA6GNqpqWw5/s800/table_syoumen_white.png' }
+        { name: '枱', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWOaYMwF9Nct4uORLXFPwdVx0xd8PUM2TNs6JaG6YtofUJlJ8_wDDYd_13gCPkhzCfpW2MkntHSR7dhAZE3SQ4ktVCaqQGNnYB-YRwnP5CJnHUbYeJ619r_Cil8V9auE8gWSA6GNqpqWw5/s800/table_syoumen_white.png' },
+        { name: '相片', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhzcs38vpsiVwrCt5rIYc0UZ_LhjTJBt3WKuv3nh_eJW0rY2gg_43BRRlLBSffbvvFGs-TvQYVLK4M5t9GbmmVbAKRRRfQ7GELib2iRJ43c-xy-h55SI9ME3Z9A6fUTatd5M5eV51Dm7lYD/s800/photo_omoide.png' },
+        { name: '八達通', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtRKlcRa_eARIFRK-14ahhPF_dTphFtHk5IuWsZMEczvdo5dvhFHHHYc4&s=10' },
+        { name: '貼紙', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgjEVkcBIZ-zqm1LTWo9vepyFLsmNSDDTZOr6lvguvMtc-vBG-7bXK5mktfcTS50Gkl9qfobHHgi6kdJXUmRepk6JkawEqhB7vNMGt5SV5FovL75vRSR1sFBw_Mr-mtJsGa71IDGMrS6nvK/s800/toy_stickers.png' },
+        { name: '梳化', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhM3YxI5TaHc9lGg0WY6QlTLi2BlCaBBH5SS08dGeCzZ0FzoVzqjFDmOW-8rbTCLIJiUW9DbvM9SUcLheKu7YIYeNDghYYExOvxdNG2lO3xg2u6bLifjz6EQ_Fz-rNLhcSThImBTwzxkYB-/s800/kagu_sofa.png' }
       ],
       '塊': [
-        { name: '餅乾', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh31oBy3UaC7xRjAasvX7_dIn8PshfG9s-Z7N98YInF4X6fXst69eO2a3aK5iJv507lqK-PZ3Z_n1243_J5Uo6O6aYh8G1R5wB565I6r5c/s800/sweets_biscuit.png' },
-        { name: '鏡', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhdF1q7kK0s0fJ2KqC9o297q2O43lE712zO0o27k187_v9I/s800/kagu_kagami.png' },
-        { name: '西瓜', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiwcZ0pG0xK2A1g-c_52aX7K4J6yV8X692P0k4_K_Z6vK90_77G6c77/s800/fruit_suika_cut.png' }
+        { name: '餅乾', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhGnbxYCYyRVVRZXc1_4LOQ0WZq41ChRCoNmTVk3jG6Jj037fz1Ln2drsHPsXj9JeKUC1SoJEYbZlCB4OtilRUi4o1a5qw3Z3r74c2LPrcGZcLea0lOaSC6924RPHFinhWyxYaq0t4bXz1-/s800/sweets_biscuit.png' },
+        { name: '餅乾', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEie40q4a5tPexkd-HBfQ03zZMo3RCYtfvxecBcXBB1cEWyqLNbNbb41teny8Cm4icvaxUwBOAjuZdKHaKzC6kz4apYxfjemxowITQ0MejyhkcTHtgzq4myxKT1UB2tL0TJuC_F2_HAMfn4/s250/cookie3_chocochip.png' },
+        { name: '鏡子', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhgaDhZC72DzmEjNxbj9Clx39ANLERgnNI4bJd7Z1qdTsdCHj8lVkOXYTlqqBRLD5NLMAdt-EEIt4Cqsk3ZNiLscGYArZRbxZ4QvTFEvKrCARPREXkdqrKWgwnwU9b45217YQ4gqeLc5RE/s1600/mirror.png' },
+        { name: '披薩', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi7n9Kr6Ov9uNtXBH8FEcxp1BeI_UwaQbF2KbyWIkc7TIPP21ZD-dSjf6KlnGuQorsySFiz7JX5Q6bzgF4Tv9n8o96FNGCba0Z3qxEdcktT8rUfFKSF-yo8vbEe2BMvhwiFFxKoB_GS9W9U/s501/food_pizza_cut_salami.png' },
+        { name: '麵包', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgEVwmsSjgvzI4cK9rT_R781js3ZPl0vGi07I81fl4us3KxMIxG08-rbciiUUE-Auc-_K4FUZ_EpP1jppY7_aYl6mPaNee1qmaF8A_Go8AqFBnTRJIV8nR3aYykw52aFnEyK1Q4TjMoDOIU/s800/bread_syokupan.png' },
+        { name: '芝士', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj2bWm10FETL63ZsDrDH_mA6qteg4DPBkr0w00iPQ8VccF6jhjN0ypTUo_gXPm_YmCZ1ByhHFw6gseOPgs_ol5GPHJ4Ih0TFlvR1T0AksmpapbiBGAg_GHT6VJqCnff_udCMj_iOqiNPvhC/s300/hamburger_goods_cheese.png' },
+        { name: '番茄', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjCLLNFWpByBrK2xQ69Mp4sPDJIB-ruwwA54dv6ZhqLwevZ73_6AwR9IRn9MxOL5mqQpmSu5xcwMCDS8XJnsmut6KWlYQxZ81DVQp1nnTcRmp03CILlG-n6ft3_jJWYksqU3fRO_qSaIrjr/s300/hamburger_goods_tomato.png' },
+        { name: '拼圖', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhk9TLhzOs5jufdZuIffskozeVy_8wiwc9gsTsqQm2bGLPjpKcO4daQWiV__qWz0q2eA8OnF7JAC88rrVURSdMHoQKqoYIFuAq3C9VkcXLafsiVnT7EEmWejrsFiZeN-DFUeQXpE8s-eoQc/s800/jigsaw_puzzle.png' }
       ]
     };
 
@@ -686,7 +701,7 @@
     let timeLeft = 30;
     let gameTimer = null;
     let moleTimer = null;
-    let activeMoles = {}; // tracks mole index to item data
+    let activeMoles = {}; 
 
     // UI Elements
     const setupPanel = document.getElementById('setup-panel');
@@ -715,7 +730,6 @@
 
     function getRandomItem() {
       const allClassifiers = Object.keys(itemsDatabase);
-      // 50% chance to pick target classifier item to ensure target appears regularly
       const isTarget = Math.random() < 0.5;
       const selectedClassifier = isTarget ? targetClassifier : allClassifiers[Math.floor(Math.random() * allClassifiers.length)];
       const items = itemsDatabase[selectedClassifier];
@@ -753,7 +767,6 @@
       timerDisplay.textContent = timeLeft;
       summaryBox.innerHTML = '🎮 遊戲進行中... (Game in progress)';
 
-      // Clear any mole positions
       for (let i = 0; i < 5; i++) {
         const mole = document.getElementById(`mole-${i}`);
         mole.classList.remove('up');
@@ -775,7 +788,6 @@
     function moleLoop() {
       if (timeLeft <= 0) return;
 
-      // Random hole (0 to 4)
       const index = Math.floor(Math.random() * 5);
       const moleEl = document.getElementById(`mole-${index}`);
 
@@ -789,7 +801,6 @@
 
         moleEl.classList.add('up');
 
-        // Hide after 1.8 seconds
         setTimeout(() => {
           if (moleEl.classList.contains('up')) {
             moleEl.classList.remove('up');
@@ -797,7 +808,7 @@
         }, 1800);
       }
 
-      const nextInterval = Math.floor(Math.random() * 600) + 600; // 600ms - 1200ms
+      const nextInterval = Math.floor(Math.random() * 600) + 600;
       moleTimer = setTimeout(moleLoop, nextInterval);
     }
 
@@ -818,7 +829,6 @@
       totalAttempts++;
       const isCorrect = (item.classifier === targetClassifier);
 
-      // Show floating FX
       showHitFX(index, isCorrect ? '+1' : '✗', isCorrect ? 'correct' : 'wrong');
 
       if (isCorrect) {
@@ -851,7 +861,6 @@
         document.getElementById(`mole-${i}`).classList.remove('up');
       }
 
-      // Generate Data Tracker Summary
       const childName = document.getElementById('child-name').value.trim() || '未填寫 (N/A)';
       const accuracy = totalAttempts > 0 ? Math.round((correctCount / totalAttempts) * 100) : 0;
 
