@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cantonese Classifier Whack-a-Mole - SLP Edition</title>
+  <style>
+    :root {
+      --primary: #4A90E2;
+      --secondary: #2ECC71;
+      --accent: #E74C3C;
+      --bg: #E8F5E9;
+      --wood: #8D6E63;
+      --text: #2C3E50;
+    }
+
+    body {
+      font-family: "PingFang HK", "Microsoft JhengHei", sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      user-select: none;
+    }
+
+    h1 {
+      margin: 5px 0 10px 0;
+      color: #2E7D32;
+      text-align: center;
+    }
+
+    .setup-panel, .tracker-panel {
+      background: white;
+      padding: 18px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      max-width: 600px;
+      width: 100%;
+      margin-bottom: 20px;
+      box-sizing: border-box;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .radio-group {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .radio-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      background: #E8F5E9;
+      border: 2px solid #C8E6C9;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .radio-btn input { display: none; }
+
+    .radio-btn.selected {
+      background: #2E7D32;
+      color: white;
+      border-color: #1B5E20;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1.1rem;
+      background: #2E7D32;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover { background: #1B5E20; }
+
+    /* Farm Game Environment */
+    .game-container {
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+      height: 420px;
+      background: linear-gradient(to bottom, #81D4FA 0%, #A5D6A7 40%, #66BB6A 100%);
+      border-radius: 16px;
+      border: 6px solid #4CAF50;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+      overflow: hidden;
+      margin-bottom: 15px;
+    }
+
+    /* Wooden Fence Background */
+    .fence {
+      position: absolute;
+      top: 110px;
+      width: 100%;
+      height: 45px;
+      background: repeating-linear-gradient(
+        90deg,
+        #A1887F 0px,
+        #A1887F 25px,
+        #6D4C41 25px,
+        #6D4C41 30px
+      );
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+    .fence-rail {
+      position: absolute;
+      top: 122px;
+      width: 100%;
+      height: 12px;
+      background: #5D4037;
+    }
+
+    /* Mole Hole Field Layout (5 Holes) */
+    .holes-grid {
+      position: absolute;
+      top: 160px;
+      width: 100%;
+      height: 250px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      align-content: space-around;
+      padding: 0 10px;
+      box-sizing: border-box;
+    }
+
+    .hole-wrapper {
+      position: relative;
+      width: 100px;
+      height: 100px;
+    }
+
+    /* Hole Mound */
+    .hole {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 38px;
+      background: #4E342E;
+      border-radius: 50%;
+      box-shadow: inset 0 6px 8px rgba(0,0,0,0.6), 0 4px 0 #388E3C;
+      z-index: 2;
+    }
+
+    /* Mole Character */
+    .mole {
+      position: absolute;
+      bottom: 15px;
+      left: 15px;
+      width: 70px;
+      height: 75px;
+      background: #795548;
+      border-radius: 35px 35px 10px 10px;
+      transition: bottom 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: inset -4px -4px 0 rgba(0,0,0,0.2);
+    }
+
+    .mole.up {
+      bottom: 30px;
+    }
+
+    /* Image Displayed Above Mole Head */
+    .mole-card {
+      position: absolute;
+      top: -42px;
+      width: 58px;
+      height: 58px;
+      background: white;
+      border: 3px solid var(--primary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    }
+
+    .mole-img {
+      width: 88%;
+      height: 88%;
+      object-fit: contain;
+    }
+
+    /* Mole Facial Features */
+    .mole-snout {
+      width: 32px;
+      height: 20px;
+      background: #D7CCC8;
+      border-radius: 12px;
+      margin-top: 24px;
+      position: relative;
+    }
+
+    .mole-nose {
+      width: 10px;
+      height: 8px;
+      background: #3E2723;
+      border-radius: 5px;
+      position: absolute;
+      top: 3px;
+      left: 11px;
+    }
+
+    .mole-eye {
+      width: 6px;
+      height: 6px;
+      background: black;
+      border-radius: 50%;
+      position: absolute;
+      top: 16px;
+    }
+    .mole-eye.left { left: 18px; }
+    .mole-eye.right { right: 18px; }
+
+    /* Pop-Up Whack FX */
+    .hit-fx {
+      position: absolute;
+      top: -20px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      pointer-events: none;
+      animation: popAndFade 0.6s forwards;
+      z-index: 10;
+    }
+    .hit-fx.correct { color: #2ECC71; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+    .hit-fx.wrong { color: #E74C3C; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+
+    @keyframes popAndFade {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-30px) scale(1.3); }
+    }
+
+    /* Game Controls Bar */
+    .game-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 640px;
+      width: 100%;
+      margin-bottom: 10px;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    .score-badge {
+      background: white;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 2px solid var(--primary);
+    }
+
+    /* Data Tracker Panel */
+    .tracker-panel {
+      border: 2px solid #2E7D32;
+      background: #F1F8E9;
+    }
+
+    .tracker-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #C8E6C9;
+      padding-bottom: 6px;
+      margin-bottom: 12px;
+    }
+
+    .tracker-header h2 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: #2E7D32;
+    }
+
+    .export-btn {
+      width: auto;
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      background: #2E7D32;
+    }
+
+    .summary-box {
+      background: white;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 0.95rem;
+      border: 1px dashed #2E7D32;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <h1>打地鼠量詞識別遊戲</h1>
+
+  <!-- Setup Panel -->
+  <div id="setup-panel" class="setup-panel">
+    <div class="form-group">
+      <label>1. 選擇目標量詞 (Target Classifier)：</label>
+      <div class="radio-group" id="classifier-options">
+        <label class="radio-btn selected"><input type="radio" name="classifier" value="個" checked>個</label>
+        <label class="radio-btn"><input type="radio" name="classifier" value="條">條</label>
+        <label class="radio-btn"><input type="radio" name="classifier" value="件">件</label>
+        <label class="radio-btn"><input type="radio" name="classifier" value="隻">隻</label>
+        <label class="radio-btn"><input type="radio" name="classifier" value="粒">粒</label>
+        <label class="radio-btn"><input type="radio" name="classifier" value="架">架</label>
+        <label class="radio-btn"><input type="radio" name="classifier" value="張">張</label>
+        <label class="radio-btn"><input type="radio" name="classifier" value="塊">塊</label>
+      </div>
+    </div>
+
+    <button id="start-btn">開始遊戲 Start Game</button>
+  </div>
+
+  <!-- Game Controls Bar -->
+  <div id="game-controls" class="game-controls hidden">
+    <button id="reset-btn" style="width: auto; padding: 6px 16px; font-size: 0.95rem;">← 返回設定 Setup</button>
+    <div class="score-badge">目標量詞: <span id="target-display" style="color:#2E7D32;">-</span></div>
+    <div class="score-badge">得分: <span id="score-display" style="color:var(--primary);">0</span></div>
+    <div class="score-badge">剩餘時間: <span id="timer-display" style="color:var(--accent);">30</span>s</div>
+  </div>
+
+  <!-- Farm Game Field -->
+  <div id="game-container" class="game-container hidden">
+    <div class="fence"></div>
+    <div class="fence-rail"></div>
+
+    <div class="holes-grid">
+      <!-- 5 Hole Spots -->
+      <div class="hole-wrapper">
+        <div class="mole" id="mole-0">
+          <div class="mole-card"><img src="" class="mole-img" id="img-0" alt=""></div>
+          <div class="mole-eye left"></div>
+          <div class="mole-eye right"></div>
+          <div class="mole-snout"><div class="mole-nose"></div></div>
+        </div>
+        <div class="hole"></div>
+      </div>
+
+      <div class="hole-wrapper">
+        <div class="mole" id="mole-1">
+          <div class="mole-card"><img src="" class="mole-img" id="img-1" alt=""></div>
+          <div class="mole-eye left"></div>
+          <div class="mole-eye right"></div>
+          <div class="mole-snout"><div class="mole-nose"></div></div>
+        </div>
+        <div class="hole"></div>
+      </div>
+
+      <div class="hole-wrapper">
+        <div class="mole" id="mole-2">
+          <div class="mole-card"><img src="" class="mole-img" id="img-2" alt=""></div>
+          <div class="mole-eye left"></div>
+          <div class="mole-eye right"></div>
+          <div class="mole-snout"><div class="mole-nose"></div></div>
+        </div>
+        <div class="hole"></div>
+      </div>
+
+      <div class="hole-wrapper">
+        <div class="mole" id="mole-3">
+          <div class="mole-card"><img src="" class="mole-img" id="img-3" alt=""></div>
+          <div class="mole-eye left"></div>
+          <div class="mole-eye right"></div>
+          <div class="mole-snout"><div class="mole-nose"></div></div>
+        </div>
+        <div class="hole"></div>
+      </div>
+
+      <div class="hole-wrapper">
+        <div class="mole" id="mole-4">
+          <div class="mole-card"><img src="" class="mole-img" id="img-4" alt=""></div>
+          <div class="mole-eye left"></div>
+          <div class="mole-eye right"></div>
+          <div class="mole-snout"><div class="mole-nose"></div></div>
+        </div>
+        <div class="hole"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Performance Data Tracker Panel -->
+  <div id="tracker-panel" class="tracker-panel hidden">
+    <div class="tracker-header">
+      <h2>紀錄面板 (Data Tracker)</h2>
+      <button class="export-btn" id="export-img-btn">📷 匯出紀錄圖片 (Export Image)</button>
+    </div>
+
+    <div style="margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+      <label for="child-name" style="margin: 0; white-space: nowrap;">學生/兒童名字 (Name):</label>
+      <input type="text" id="child-name" placeholder="請輸入名字..." style="padding: 6px 10px; width: 100%; border-radius: 6px; border: 1px solid #CCC;">
+    </div>
+
+    <div class="summary-box" id="summary-box">遊戲尚未完成</div>
+  </div>
+
+  <script>
+    const itemsDatabase = {
+      '個': [
+        { name: '蘋果', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgvJ8nlAjtvyl8jap55PKPnJt__ggEPtiLoMoqmaGZDiS45yB2LbJUHK7GHHAZ-vsJPHqP79zoCC2BXO8KgnGoMnbj8Rjpme8VKVgidzNbd7vQfaJ_VXIud3UJQ9FMf0yRoS8Mkq5u0M44P/s800/color01_red_apple.png' },
+        { name: '橙', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgq_eoN9nP7LgUxh2K-JGh2OYN-FpanztymNDq9RXFEnLZed8LZldlOAVeWjAdaFjd1896aKxGeOScicmN9mym7mEYNd8XGKa7OITkps7vqU0KYu3h9jWSsANDqRGVtGS-qn8jkT_2g-HYl/s800/fruit_orange.png' },
+        { name: '蛋糕', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgfLl5E-caldAC59w3JzZ-USulyEc4gnC8iqtTuxr-Lg2o6hYTMxZiHhX3zuucbZIFKlBUNu8TBXTjWpAHLsaSbYpWh0r8gz5lVY7MNJONbLFl4ZUgsyvzl9QfAb3v1mK_JeHAGfrsmjDlY/s800/sweets_cake_pavlova.png' },        
+        { name: '醫生', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjpsvP9QDnabkeqQ9L1Bw24Vli0KIKPDbrGfyml-X_PLQR0fZ5lGbf9T_clMas9uPzTlopievGQk8n91Olerh8-aJqb4fJkOxrSLIB5l55oEpev2LCSOxpvqhBg593pWT9OywKlwnfm4HrV/s1600/job_doctor_man.png' },
+        { name: '波', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgq3m6ieaVXOaz-vS-ZeXNKJbby5yge-iVr6ABiAbExV1ma088hg2x4s0Zd-owG61Y-SMGMXk04snSjbzscWTkSB-4YvwuuRbsZjUNuuAJSiHUiA71om7F8Abf5_tlA-mKGWzzY0UrnrAod/s180-c/beach_ball.png' }
+      ],
+      '條': [
+        { name: '魚', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhDeCHHR7_MlVXcfPxa0QJIuoF8htqqifHrW1TirkL2KIEXpZsOE5o8R6YJ87r8GyWzhUvhRzgGD8cyOrUJkKqYWjQ8JGTJIMtT5c_1Fenae83hLALGAVVDar5l-ZDc3mEzyjRW73HnfBE/s800/fish_maguro.png' },
+        { name: '香蕉', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjDTy81qEYQ7MLvImTaqiWn_8Wu16qPSIVeJP0Aae64gv07aXn1vB7bYczEbPjMqj-CEgAe9DMTD4KkQ2kq83y1tYUcJF3RbF7LJAe0qZLRVwd667uFMHukkjcEC1rzWheoOtGI1eqhCywi/s800/fruit_banana.png' },
+        { name: '褲', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhVKhfNZTFjxQTCgq2qoUaK_znvT5TwomCk_3b5f1XlO0rJf77wRP_TOe9d8D36_AUqrc9o6CPq9I2w3WDd3gtL77S1LL9bWLs1ZoshR8SmBB8x8BApLKKdYkd3fdJn_W64A13VKgq8T-GE/s627/fashion_pants2_black.png' },
+        { name: '毛巾', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgXd2PVUBnKU-wHuNzR-lEKPryyHG-3pdqIlcc8t7_GOWpqjDHrshnxnUrHAhG9XFVMR555MScpPweHyXlmt-ExGT4ilgigQYU71y-ACGHDDN14fLyYZMKBH90HbjX-R4ME6dwYJDxSAEQX/s800/towel_kake.png' },
+        { name: '蛇', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEib_aNImB4YeHc74m6gzwDrVWWWWQG5fBmB_pP_Q1yq1GMuM9vyEJMB7dyCQT-UxQYfw986zxut2N3HewrDOuBw4XM5E45nV_-zSSAqsJ4AG6EEUV7jesvxb-LoBXywW9Yhxx5JkSs2Ttg/s800/hebi.png' }
+      ],
+      '件': [
+        { name: '衫', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgLAr0ug3_i2m1EbNbLp4hmzGZgdPZUy2CceGy7z7QmJqp3Zvr9MytjTHS2TB2Ul_nP2BrsMfb8UXgC4VlVDyRRrr37owOAZQjDzy7cwrp4oRmnMsz29fRuQ2YCI5u9D0pXfCvrV3T7dG0/s400/sentaku_tshirt.png' },
+        { name: '外套', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjTXVTPHJPpawiXRYTT7BXxuYPYGUuMhKE844EfpufnkGgSsxuf_MZhgMYr4CdbbT_NYvD-2S-QF9yJZi-o-DrPSg2r475o72dSR0iF7KS89g9v6i46cKRdC4Q2ky9Ws8hNFkUFncd4IWA/s800/fashion_down_jacket.png' },
+        { name: '睡衣', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiHbWk09h1Noo2mtu96rMl57c4tUvoArj_n3Wvzd4lAv5lfeexWiP3TRWg58L1zu-Brluj4rKiSZ5wBnIgs0Kv6ixK7L5XTjRBl5kKhZf4CwjQJs8DU3HWpO6QnCSEkmHnpFrB-ZhbsL9yZ/s400/kid_kigae_girl.png' },
+        { name: '雨衣', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiXmN5T31SYm-N4hp1B8izjbAOarr4GLEnVN7kZsqa7MMpCoggVHmqisKU9Qo3zad_ldRERARwgjXuuq0D1VEYCvlIIcOb2bg33IVfVKCaSyM-6IJqIkwWoGM-H69ZeZuFi9KCdhRWOCtE/s400/fashion_raincoat_amagappa.png' }
+      ],
+      '隻': [
+        { name: '狗', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi体内56zNVAeR-4r1V3dGYiquyg8clI8DWQocjPgodXO5XENIVyEpg91iXMFdmfiEPZGXtzzR5MU9jc4PmtiRb1zco6UhyphenhyphennOUNUUbSsUt3vVFF5SE01mpLupgecjE7vKxaWsU_5y0hcc/s800/animal_dog_osuwari.png' },
+        { name: '貓', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiTDl81C4SMTFVZC9yP0m0iESBSw_0D53KcR3HGvR27lDFJzFWSDvRawhJEKAeoT19GHEJI8iTwLEMPeuTOcZpLI-BBDatvH2LPHS2S_F6vFFOAJ_56bwfsqNTVjp7shr1_g0QPaAWj1vyp/s400/pet_cat_sit.png' },
+        { name: '雀仔', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgpE4oCTN3xfTnb3ZA92EyuhFw9YyZTnjCQ1CmToEbDnkEKSL0fTbrVyZd6YWap8fpKJ1xTkJ1Ooeg8o7ACOxYtr2gwFpK244i46w1-C-uC2nqOKHXAx-NLF27SX_qDwHGuO838MveGyYSC/s400/bird_mameruriha_inko_blue.png' },
+        { name: '兔子', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiHBIpFKJISBPLsRg4lmMV9wB2HoU4MGvq5JmEXiAjia5knfUawex8qR6HyDIPcXJPYHxa0u_lLEEoWBYefgmL3PgVKOPRq0bqVNs6t3km0O85xZHGe0SYqoXmM-RgXoSE3maKv29vdqbw/s400/usagi_oyako.png' }
+      ],
+      '粒': [
+        { name: '糖', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgMb6IQYWkmnenbvHuhfmuDzjMqfuXq7xo-0q9GtXtdTG8s-Oui-H5sfcGCyTORLBHcwUBruYnU2wPhW5nqRsTrU71DDYRBpaCDHFwlu99S90Gq46fzGIOngavbfv3slLhqwqwSxXUQVMnW/s1600/candy.png' },
+        { name: '提子', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh994bi67c6Zxa2BdJD9gdASA-t8QHAaOET1qC3nHwAr5Et4V-KU7sxo7LF0Y9FVNgkaHVSbIe7UWsloELmFDDTXE41YT7NeIQJk-Z7ivW2DNd8vigiwjI3I3u5qA9i3NZiPAanriNaaUgh/s400/fruit_slice12_grape.png' },
+        { name: '草莓', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi16xaBrly6jqbVAhvgAWn-JdGhVIRXmatPCrcV8n742YEMOFnD6bq17TlSDPNZ-cSQEqXSrXlGKFkksGW0JL2CuRk1uHaC58YE2MKMfbeEoUDADcIUikvNVZ1LzeHQEG4EX3_eQ30kvoRm/s800/fruit_strawberry.png' }
+      ],
+      '架': [
+        { name: '車', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjLVz7O1ZW-iv4uq3k_uaeDsGe9uS0HiIJGPCHsHUiFAwaegw5uImc6azJnu3YDnDUc8cX7klP3fjMMrpaxAMdy38GMEuWeHD8LGiS65dKdffdsmI70Uq2Gqw24mrzuByDZy85qU-fpz0S2/s800/car_side.png' },
+        { name: '飛機', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjZgtLYU9QNMwQvytfhVbhh77Q2s8e1vDL86KXfwtpLRl9XB-DiCBJE272uKgFzWR_5jazC14xm46WPeSfP7aNkSSlhJ95daYRT5eKfh_7xRfzXuQBN2C5svoqR_B_qwj2NOAfv7Ke2Na8u/w1200-h630-p-k-no-nu/private_jet.png' },
+        { name: '單車', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgRcaunU41yVfjG1Bn-I_-8SxZHnENcrq8uJHNHVwsv4O1Lzyzrm2z79avRTJ0fdBRxz7Nkuhk-lwHZKTWTsZOKaM6hLs8pV5vWtXap_f4m-R5TAO9kJq5Ekps0T0RoDKzrN2K7BIWeLy50/s800/kids_bicycle06.png' }
+      ],
+      '張': [
+        { name: '紙巾', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjw8yn3qD8llFSs8T68GEk3lTROoyc6XCog_xggnlDgm3U5j1H0wrVkg-UZA8n2YA6dB181x4pB7dMvxBoorJ0U6WcHFIa_fyIsRRarCvHIqY62L_c1rW0LGp3y8WHcl9oIcPzAVcAw-zAL/s800/kagaku_kami_wesu.png' },
+        { name: '櫈', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiZyrTkpr3LoNifVcXZ21kESg4o984PFyR-WVLrUyOoLXkBbjiNtl2OlRysoFgobwpJtYIKp17LnIkZP0B20ZKQu5JrM7_x-6hqgg_O2CLSs9HYxUuHoreuD_g97UtwicKViAveI9hhER/s800/gakkou_isu_chair.png' },
+        { name: '床', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiIM6T9TDOABk07xBUqu_xfFycL4osB9ygEKpw7485Mk0BUNOiIX2wc3bhzEGNHD1rOkTN42FKLD90GmEsXfhLBOtJMubdK1qT7c8AcKLHpNJula5_9KWkbmWFhLaVaPGrHCz-1jnDdPw7Q/s800/kagu_bed.png' }
+      ],
+      '塊': [
+        { name: '餅乾', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhGnbxYCYyRVVRZXc1_4LOQ0WZq41ChRCoNmTVk3jG6Jj037fz1Ln2drsHPsXj9JeKUC1SoJEYbZlCB4OtilRUi4o1a5qw3Z3r74c2LPrcGZcLea0lOaSC6924RPHFinhWyxYaq0t4bXz1-/s800/sweets_biscuit.png' },
+        { name: '鏡子', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhgaDhZC72DzmEjNxbj9Clx39ANLERgnNI4bJd7Z1qdTsdCHj8lVkOXYTlqqBRLD5NLMAdt-EEIt4Cqsk3ZNiLscGYArZRbxZ4QvTFEvKrCARPREXkdqrKWgwnwU9b45217YQ4gqeLc5RE/s1600/mirror.png' },
+        { name: '披薩', img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi7n9Kr6Ov9uNtXBH8FEcxp1BeI_UwaQbF2KbyWIkc7TIPP21ZD-dSjf6KlnGuQorsySFiz7JX5Q6bzgF4Tv9n8o96FNGCba0Z3qxEdcktT8rUfFKSF-yo8vbEe2BMvhwiFFxKoB_GS9W9U/s501/food_pizza_cut_salami.png' }
+      ]
+    };
+
+    let targetClassifier = '個';
+    let score = 0;
+    let timeLeft = 30;
+    let timerInterval = null;
+    let moleSequence = [];
+    let currentMoleIndex = 0;
+    let activeMoleTimeout = null;
+    let targetWhacks = 0;
+    let distractorWhacks = 0;
+    let totalTargetsSpawned = 0;
+
+    const setupPanel = document.getElementById('setup-panel');
+    const gameContainer = document.getElementById('game-container');
+    const gameControls = document.getElementById('game-controls');
+    const trackerPanel = document.getElementById('tracker-panel');
+    const summaryBox = document.getElementById('summary-box');
+    const targetDisplay = document.getElementById('target-display');
+    const scoreDisplay = document.getElementById('score-display');
+    const timerDisplay = document.getElementById('timer-display');
+    const startBtn = document.getElementById('start-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const exportImgBtn = document.getElementById('export-img-btn');
+    const childNameInput = document.getElementById('child-name');
+
+    // Radio button UI handling
+    const radioBtns = document.querySelectorAll('.radio-btn');
+    radioBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        radioBtns.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        btn.querySelector('input').checked = true;
+      });
+    });
+
+    startBtn.addEventListener('click', startGame);
+    resetBtn.addEventListener('click', stopGameAndReset);
+    exportImgBtn.addEventListener('click', exportTrackerAsImage);
+
+    function startGame() {
+      const selectedRadio = document.querySelector('input[name="classifier"]:checked');
+      targetClassifier = selectedRadio ? selectedRadio.value : '個';
+
+      score = 0;
+      timeLeft = 30;
+      targetWhacks = 0;
+      distractorWhacks = 0;
+      totalTargetsSpawned = 0;
+      currentMoleIndex = 0;
+
+      targetDisplay.textContent = targetClassifier;
+      scoreDisplay.textContent = '0';
+      timerDisplay.textContent = '30';
+
+      // Build pool of 10 moles (5 Targets, 5 Distractors)
+      moleSequence = generateMolePool(targetClassifier);
+
+      setupPanel.classList.add('hidden');
+      gameControls.classList.remove('hidden');
+      gameContainer.classList.remove('hidden');
+      trackerPanel.classList.add('hidden');
+
+      // Setup Whack Event Listeners on moles
+      for (let i = 0; i < 5; i++) {
+        const moleElem = document.getElementById(`mole-${i}`);
+        moleElem.onclick = (e) => whackMole(i, e);
+      }
+
+      startTimer();
+      spawnNextMole();
+    }
+
+    function generateMolePool(targetCls) {
+      const pool = [];
+      
+      // Get target items
+      const targetItems = [...itemsDatabase[targetCls]];
+      for (let i = 0; i < 5; i++) {
+        const item = targetItems[i % targetItems.length];
+        pool.push({ ...item, isTarget: true });
+      }
+
+      // Get distractor items from all other classifiers
+      const distractorPool = [];
+      Object.keys(itemsDatabase).forEach(cls => {
+        if (cls !== targetCls) {
+          itemsDatabase[cls].forEach(item => distractorPool.push(item));
+        }
+      });
+
+      for (let i = 0; i < 5; i++) {
+        const randomIdx = Math.floor(Math.random() * distractorPool.length);
+        const item = distractorPool.splice(randomIdx, 1)[0];
+        pool.push({ ...item, isTarget: false });
+      }
+
+      // Shuffle the 10 moles
+      return shuffle(pool);
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function spawnNextMole() {
+      if (currentMoleIndex >= moleSequence.length || timeLeft <= 0) {
+        endGame();
+        return;
+      }
+
+      const moleData = moleSequence[currentMoleIndex];
+      const randomHoleIdx = Math.floor(Math.random() * 5);
+
+      const moleElem = document.getElementById(`mole-${randomHoleIdx}`);
+      const imgElem = document.getElementById(`img-${randomHoleIdx}`);
+
+      imgElem.src = moleData.img;
+      moleElem.dataset.isTarget = moleData.isTarget;
+      moleElem.dataset.whacked = 'false';
+
+      if (moleData.isTarget) totalTargetsSpawned++;
+
+      moleElem.classList.add('up');
+
+      // Mole stays up for 1.8 seconds before going back down
+      activeMoleTimeout = setTimeout(() => {
+        moleElem.classList.remove('up');
+        currentMoleIndex++;
+        // Pause briefly before spawning next mole
+        setTimeout(spawnNextMole, 400);
+      }, 1800);
+    }
+
+    function whackMole(holeIdx, event) {
+      const moleElem = document.getElementById(`mole-${holeIdx}`);
+      if (!moleElem.classList.contains('up') || moleElem.dataset.whacked === 'true') return;
+
+      moleElem.dataset.whacked = 'true';
+      clearTimeout(activeMoleTimeout);
+
+      const isTarget = moleElem.dataset.isTarget === 'true';
+
+      // Visual Pop-up feedback
+      showHitFX(holeIdx, isTarget ? '+1' : '✗', isTarget ? 'correct' : 'wrong');
+
+      if (isTarget) {
+        score++;
+        targetWhacks++;
+        scoreDisplay.textContent = score;
+      } else {
+        distractorWhacks++;
+      }
+
+      // Immediately retract whacked mole
+      moleElem.classList.remove('up');
+      currentMoleIndex++;
+
+      setTimeout(spawnNextMole, 350);
+    }
+
+    function showHitFX(holeIdx, text, type) {
+      const holeWrapper = document.querySelectorAll('.hole-wrapper')[holeIdx];
+      const fx = document.createElement('div');
+      fx.className = `hit-fx ${type}`;
+      fx.textContent = text;
+      holeWrapper.appendChild(fx);
+
+      setTimeout(() => fx.remove(), 600);
+    }
+
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function stopGameAndReset() {
+      clearInterval(timerInterval);
+      clearTimeout(activeMoleTimeout);
+
+      // Hide all moles
+      for (let i = 0; i < 5; i++) {
+        document.getElementById(`mole-${i}`).classList.remove('up');
+      }
+
+      gameContainer.classList.add('hidden');
+      gameControls.classList.add('hidden');
+      trackerPanel.classList.add('hidden');
+      setupPanel.classList.remove('hidden');
+    }
+
+    function endGame() {
+      clearInterval(timerInterval);
+      clearTimeout(activeMoleTimeout);
+
+      for (let i = 0; i < 5; i++) {
+        document.getElementById(`mole-${i}`).classList.remove('up');
+      }
+
+      // Calculate SLP summary metrics
+      const totalWhacks = targetWhacks + distractorWhacks;
+      const accuracy = totalWhacks > 0 ? Math.round((targetWhacks / totalWhacks) * 100) : 0;
+      const targetHitRate = totalTargetsSpawned > 0 ? Math.round((targetWhacks / totalTargetsSpawned) * 100) : 0;
+
+      summaryBox.innerHTML = `
+        <div>🎯 **目標量詞 (Target Classifier):** 一${targetClassifier}...</div>
+        <div>得分 (Score): ${score} / 5</div>
+        <div>正確打中目標 (Target Hits): ${targetWhacks} / ${totalTargetsSpawned} (${targetHitRate}%)</div>
+        <div>誤打干擾項 (Distractor Hits): ${distractorWhacks}</div>
+        <div>整體打中正確率 (Accuracy): ${accuracy}%</div>
+      `;
+
+      trackerPanel.classList.remove('hidden');
+    }
+
+    /* Export Performance Summary as Image */
+    function exportTrackerAsImage() {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      const nameVal = childNameInput.value.trim() || '未填寫 (N/A)';
+      const width = 500;
+      const height = 300;
+
+      canvas.width = width;
+      canvas.height = height;
+
+      // Card Canvas Styling
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.strokeStyle = '#2E7D32';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(10, 10, width - 20, height - 20);
+
+      ctx.fillStyle = '#2E7D32';
+      ctx.font = 'bold 20px "PingFang HK", "Microsoft JhengHei", sans-serif';
+      ctx.fillText('打地鼠量詞識別 - 紀錄面板', 30, 45);
+
+      const today = new Date().toLocaleDateString('zh-HK');
+      ctx.fillStyle = '#2C3E50';
+      ctx.font = 'bold 15px sans-serif';
+      ctx.fillText(`學生名字 (Name): ${nameVal}`, 30, 75);
+
+      ctx.fillStyle = '#718096';
+      ctx.font = '14px sans-serif';
+      ctx.fillText(`日期 Date: ${today}`, 30, 98);
+
+      ctx.strokeStyle = '#C8E6C9';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(30, 110);
+      ctx.lineTo(width - 30, 110);
+      ctx.stroke();
+
+      // Details
+      ctx.fillStyle = '#2C3E50';
+      ctx.font = '15px sans-serif';
+      ctx.fillText(`目標量詞 (Target Classifier): 一${targetClassifier}...`, 30, 140);
+      ctx.fillText(`得分 (Score): ${score} / 5`, 30, 170);
+      ctx.fillText(`正確打中目標 (Target Hits): ${targetWhacks} / ${totalTargetsSpawned}`, 30, 200);
+      ctx.fillText(`誤打干擾項 (Distractor Mis-hits): ${distractorWhacks}`, 30, 230);
+
+      const totalWhacks = targetWhacks + distractorWhacks;
+      const accuracy = totalWhacks > 0 ? Math.round((targetWhacks / totalWhacks) * 100) : 0;
+      ctx.fillStyle = '#2E7D32';
+      ctx.font = 'bold 16px sans-serif';
+      ctx.fillText(`整體正確率 (Accuracy): ${accuracy}%`, 30, 265);
+
+      // Download Trigger
+      const link = document.createElement('a');
+      const safeName = nameVal.replace(/[/\\?%*:|"<>]/g, '');
+      link.download = `打地鼠量詞紀錄_${safeName}_${today.replace(/\//g, '-')}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+  </script>
+</body>
+</html>
