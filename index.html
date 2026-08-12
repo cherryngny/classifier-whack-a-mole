@@ -15,7 +15,7 @@
     }
 
     body {
-      font-family: "PingFang HK", "Microsoft JhengHei", sans-serif;
+      font-family: "PingFang HK", "Microsoft JhengHei", -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: #F4F7F6;
       color: var(--text);
       margin: 0;
@@ -201,7 +201,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      z-index: 15;
+      z-index: 15; /* HIGHER than mound (z:10) to bring sign to front */
       pointer-events: none;
     }
 
@@ -216,7 +216,7 @@
       align-items: center;
       justify-content: center;
       box-shadow: 0 6px 14px rgba(0,0,0,0.3);
-      padding: 4px;
+      padding: 2px;
       box-sizing: border-box;
       pointer-events: auto;
     }
@@ -229,21 +229,17 @@
       margin-top: -4px;
     }
 
-    .mole-img-box {
-      width: 52px;
-      height: 52px;
+    .mole-emoji-box {
+      font-size: 2.2rem;
+      line-height: 1;
+      height: 42px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .mole-img-box svg {
-      width: 100%;
-      height: 100%;
-    }
-
     .mole-label {
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       font-weight: bold;
       color: #2D3748;
       margin-top: 1px;
@@ -391,8 +387,8 @@
         <div class="mole" id="mole-0">
           <div class="mole-card-wrapper">
             <div class="mole-card">
-              <div class="mole-img-box" id="img-0"></div>
-              <div class="mole-label" id="label-0"></div>
+              <div class="mole-emoji-box" id="emoji-0">🍎</div>
+              <div class="mole-label" id="label-0">蘋果</div>
             </div>
             <div class="mole-stick"></div>
           </div>
@@ -410,8 +406,8 @@
         <div class="mole" id="mole-1">
           <div class="mole-card-wrapper">
             <div class="mole-card">
-              <div class="mole-img-box" id="img-1"></div>
-              <div class="mole-label" id="label-1"></div>
+              <div class="mole-emoji-box" id="emoji-1">🍊</div>
+              <div class="mole-label" id="label-1">橙</div>
             </div>
             <div class="mole-stick"></div>
           </div>
@@ -429,8 +425,8 @@
         <div class="mole" id="mole-2">
           <div class="mole-card-wrapper">
             <div class="mole-card">
-              <div class="mole-img-box" id="img-2"></div>
-              <div class="mole-label" id="label-2"></div>
+              <div class="mole-emoji-box" id="emoji-2">🍰</div>
+              <div class="mole-label" id="label-2">蛋糕</div>
             </div>
             <div class="mole-stick"></div>
           </div>
@@ -448,8 +444,8 @@
         <div class="mole" id="mole-3">
           <div class="mole-card-wrapper">
             <div class="mole-card">
-              <div class="mole-img-box" id="img-3"></div>
-              <div class="mole-label" id="label-3"></div>
+              <div class="mole-emoji-box" id="emoji-3">⚽</div>
+              <div class="mole-label" id="label-3">波</div>
             </div>
             <div class="mole-stick"></div>
           </div>
@@ -467,8 +463,8 @@
         <div class="mole" id="mole-4">
           <div class="mole-card-wrapper">
             <div class="mole-card">
-              <div class="mole-img-box" id="img-4"></div>
-              <div class="mole-label" id="label-4"></div>
+              <div class="mole-emoji-box" id="emoji-4">🍔</div>
+              <div class="mole-label" id="label-4">漢堡包</div>
             </div>
             <div class="mole-stick"></div>
           </div>
@@ -498,52 +494,78 @@
   </div>
 
   <script>
-    // Embedded Vector SVG Database
+    // Bulletproof Emoji Database
     const itemsDatabase = {
       '個': [
-        { name: '蘋果', svg: `<svg viewBox="0 0 64 64"><path d="M32 12c-4-6-12-4-14 2-4 0-8 6-6 14 3 14 20 22 20 22s17-8 20-22c2-8-2-14-6-14-2-6-10-8-14-2z" fill="#E53E3E"/><path d="M32 12c2-4 6-6 10-4" stroke="#276749" stroke-width="3" fill="none"/></svg>` },
-        { name: '橙', svg: `<svg viewBox="0 0 64 64"><circle cx="32" cy="34" r="22" fill="#ED8936"/><circle cx="32" cy="34" r="18" fill="#F6AD55"/><path d="M32 12c-2-4 2-6 6-4" stroke="#276749" stroke-width="3" fill="none"/></svg>` },
-        { name: '蛋糕', svg: `<svg viewBox="0 0 64 64"><path d="M12 36h40v16H12z" fill="#ED8936"/><path d="M12 28h40v8H12z" fill="#FFF5F5"/><circle cx="32" cy="20" r="6" fill="#E53E3E"/></svg>` },
-        { name: '波', svg: `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="#3182CE"/><path d="M10 32h44M32 10v44" stroke="white" stroke-width="4"/></svg>` },
-        { name: '漢堡包', svg: `<svg viewBox="0 0 64 64"><path d="M14 28c0-8 8-12 18-12s18 4 18 12H14z" fill="#DD6B20"/><path d="M10 30h44v4H10z" fill="#38A169"/><path d="M12 36h40v6H12z" fill="#742A2A"/><path d="M14 44c0 4 8 6 18 6s18-2 18-6H14z" fill="#DD6B20"/></svg>` }
+        { name: '泡泡', icon: '🫧' },
+        { name: '橙', icon: '🍊' },
+        { name: '蛋糕', icon: '🎂' },
+        { name: '波', icon: '⚽' },
+        { name: '漢堡包', icon: '🍔' },
+        { name: '鐘', icon: '⏰' },
+        { name: '醫生', icon: '🧑🏻‍⚕️' },
+        { name: '廚師', icon: '🧑🏻‍🍳' },
       ],
       '條': [
-        { name: '魚', svg: `<svg viewBox="0 0 64 64"><path d="M12 32c10-12 28-12 36 0-8 12-26 12-36 0z" fill="#4299E1"/><path d="M44 32l12-10v20L44 32z" fill="#3182CE"/><circle cx="20" cy="28" r="2" fill="white"/></svg>` },
-        { name: '香蕉', svg: `<svg viewBox="0 0 64 64"><path d="M14 18c20 0 36 16 36 36-8 0-26-10-36-36z" fill="#ECC94B"/><path d="M14 18c2-2 4-2 6 0" stroke="#744210" stroke-width="3"/></svg>` },
-        { name: '褲', svg: `<svg viewBox="0 0 64 64"><path d="M16 16h32v8L42 52h-8l-2-20-2 20h-8L16 24v-8z" fill="#2B6CB0"/></svg>` },
-        { name: '毛巾', svg: `<svg viewBox="0 0 64 64"><rect x="16" y="12" width="32" height="40" rx="4" fill="#9F7AEA"/><path d="M16 44h32" stroke="#718096" stroke-width="2" stroke-dasharray="4"/></svg>` },
-        { name: '彩虹', svg: `<svg viewBox="0 0 64 64"><path d="M12 48a20 20 0 0 1 40 0" stroke="#E53E3E" stroke-width="4" fill="none"/><path d="M16 48a16 16 0 0 1 32 0" stroke="#ECC94B" stroke-width="4" fill="none"/><path d="M20 48a12 12 0 0 1 24 0" stroke="#3182CE" stroke-width="4" fill="none"/></svg>` }
+        { name: '魚', icon: '🐟' },
+        { name: '香蕉', icon: '🍌' },
+        { name: '褲', icon: '👖' },
+        { name: '頸巾', icon: '🧣' },
+        { name: '彩虹', icon: '🌈' },
+        { name: '蛇', icon: '🐍' },
+        { name: '裙', icon: '👗' },
+        { name: '海豚', icon: '🐬' }
       ],
       '件': [
-        { name: '衫', svg: `<svg viewBox="0 0 64 64"><path d="M16 20l10-8h12l10 8 6 10-8 4-4-6v24H22V28l-4 6-8-4 6-10z" fill="#319795"/></svg>` },
-        { name: '外套', svg: `<svg viewBox="0 0 64 64"><path d="M14 18l12-6h12l12 6 4 12-8 3-2-7v26H18V26l-2 7-8-3 4-12z" fill="#2C5282"/><path d="M32 12v38" stroke="#ECC94B" stroke-width="2"/></svg>` },
-        { name: '雨衣', svg: `<svg viewBox="0 0 64 64"><path d="M16 22l10-10h12l10 10 6 12-8 3-2-7v22H18V30l-2 7-8-3 6-12z" fill="#D69E2E"/><circle cx="32" cy="12" r="6" fill="#D69E2E"/></svg>` }
+        { name: '衫', icon: '👕' },
+        { name: '衫', icon: '👚' },
+        { name: '袍', icon: '🥼' },
+        { name: '背心', icon: '🦺' },
+        { name: '外套', icon: '🧥' },
+        { name: '泳衣', icon: '🩱' },
       ],
       '隻': [
-        { name: '狗', svg: `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="18" fill="#ED8936"/><path d="M14 22c-2 8 2 12 4 12s2-8-4-12zm32 0c2 8-2 12-4 12s-2-8 4-12z" fill="#C05621"/><circle cx="26" cy="30" r="2" fill="black"/><circle cx="38" cy="30" r="2" fill="black"/><ellipse cx="32" cy="36" rx="4" ry="3" fill="black"/></svg>` },
-        { name: '貓', svg: `<svg viewBox="0 0 64 64"><circle cx="32" cy="34" r="18" fill="#A0AEC0"/><path d="M16 22l8 6-2-10-6 4zm32 0l-8 6 2-10 6 4z" fill="#718096"/><circle cx="25" cy="32" r="2" fill="black"/><circle cx="39" cy="32" r="2" fill="black"/><polygon points="32,36 30,39 34,39" fill="#E53E3E"/></svg>` },
-        { name: '雀仔', svg: `<svg viewBox="0 0 64 64"><circle cx="28" cy="32" r="16" fill="#3182CE"/><polygon points="40,30 52,32 40,36" fill="#ED8936"/><circle cx="24" cy="28" r="2" fill="white"/></svg>` },
-        { name: '烏龜', svg: `<svg viewBox="0 0 64 64"><ellipse cx="32" cy="34" rx="18" ry="14" fill="#38A169"/><circle cx="48" cy="34" r="6" fill="#48BB78"/><circle cx="16" cy="24" r="4" fill="#48BB78"/><circle cx="16" cy="44" r="4" fill="#48BB78"/><circle cx="44" cy="24" r="4" fill="#48BB78"/><circle cx="44" cy="44" r="4" fill="#48BB78"/></svg>` }
+        { name: '狗', icon: '🐶' },
+        { name: '貓', icon: '🐱' },
+        { name: '雀仔', icon: '🐦' },
+        { name: '兔子', icon: '🐰' },
+        { name: '烏龜', icon: '🐢' },
+        { name: '大象', icon: '🐘' },
+        { name: '鴨仔', icon: '🦆' },
       ],
       '粒': [
-        { name: '糖', svg: `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="12" fill="#ED64A6"/><polygon points="12,20 22,32 12,44" fill="#ED64A6"/><polygon points="52,20 42,32 52,44" fill="#ED64A6"/></svg>` },
-        { name: '提子', svg: `<svg viewBox="0 0 64 64"><circle cx="26" cy="26" r="6" fill="#805AD5"/><circle cx="38" cy="26" r="6" fill="#805AD5"/><circle cx="32" cy="34" r="6" fill="#6B46C1"/><circle cx="26" cy="42" r="6" fill="#6B46C1"/><circle cx="38" cy="42" r="6" fill="#553C9A"/><path d="M32 12v8" stroke="#276749" stroke-width="3"/></svg>` },
-        { name: '草莓', svg: `<svg viewBox="0 0 64 64"><path d="M32 52C20 40 16 28 20 20c4-8 20-8 24 0 4 8 0 20-12 32z" fill="#E53E3E"/><path d="M24 18c4 2 12 2 16 0-2-4-14-4-16 0z" fill="#38A169"/></svg>` }
+        { name: '糖', icon: '🍬' },
+        { name: '紅豆', icon: '🫘' },
+        { name: '草莓', icon: '🍓' },
+        { name: '花生', icon: '🥜' },
+        { name: '藥丸', icon: '💊' },
+        { name: '車厘子', icon: '🍒' }
       ],
       '架': [
-        { name: '車', svg: `<svg viewBox="0 0 64 64"><path d="M12 34l6-10h28l6 10v12H12V34z" fill="#E53E3E"/><circle cx="20" cy="46" r="6" fill="#2D3748"/><circle cx="44" cy="46" r="6" fill="#2D3748"/><rect x="22" y="26" width="8" height="6" fill="#E2E8F0"/><rect x="34" y="26" width="8" height="6" fill="#E2E8F0"/></svg>` },
-        { name: '飛機', svg: `<svg viewBox="0 0 64 64"><path d="M8 32l48-8v16L8 32z" fill="#CBD5E0"/><path d="M28 12l8 16H24l4-16zM28 52l8-16H24l4 16z" fill="#A0AEC0"/></svg>` },
-        { name: '單車', svg: `<svg viewBox="0 0 64 64"><circle cx="18" cy="38" r="10" stroke="#2D3748" stroke-width="4" fill="none"/><circle cx="46" cy="38" r="10" stroke="#2D3748" stroke-width="4" fill="none"/><path d="M18 38l10-14h12l6 14M28 24l8 14" stroke="#E53E3E" stroke-width="4" fill="none"/></svg>` }
+        { name: '車', icon: '🚗' },
+        { name: '飛機', icon: '✈️' },
+        { name: '單車', icon: '🚲' },
+        { name: '巴士', icon: '🚌' },
+        { name: '直升機', icon: '🚁' },
+        { name: '消防車', icon: '🚒' }
+        { name: '地鐵', icon: '🚊' }
+        { name: '貨車', icon: '🚛' }
       ],
       '張': [
-        { name: '紙巾', svg: `<svg viewBox="0 0 64 64"><rect x="14" y="28" width="36" height="20" rx="3" fill="#CBD5E0"/><path d="M22 28c4-12 16-12 20 0H22z" fill="#EDF2F7"/></svg>` },
-        { name: '櫈', svg: `<svg viewBox="0 0 64 64"><rect x="18" y="22" width="28" height="6" rx="2" fill="#DD6B20"/><path d="M22 28v22M42 28v22" stroke="#744210" stroke-width="4"/></svg>` },
-        { name: '床', svg: `<svg viewBox="0 0 64 64"><rect x="10" y="30" width="44" height="12" fill="#3182CE"/><rect x="14" y="24" width="12" height="8" rx="2" fill="#EDF2F7"/><path d="M10 20v24M54 30v14" stroke="#2D3748" stroke-width="4"/></svg>` }
+        { name: '紙', icon: '📄' },
+        { name: '櫈', icon: '🪑' },
+        { name: '床', icon: '🛏️' },
+        { name: '梳化', icon: '🛋️' },
+        { name: '卡', icon: '🪪' },
+        { name: '卡片', icon: '💳' }
       ],
       '塊': [
-        { name: '餅乾', svg: `<svg viewBox="0 0 64 64"><rect x="16" y="16" width="32" height="32" rx="6" fill="#D69E2E"/><circle cx="24" cy="24" r="2" fill="#744210"/><circle cx="40" cy="24" r="2" fill="#744210"/><circle cx="32" cy="32" r="2" fill="#744210"/><circle cx="24" cy="40" r="2" fill="#744210"/><circle cx="40" cy="40" r="2" fill="#744210"/></svg>` },
-        { name: '鏡子', svg: `<svg viewBox="0 0 64 64"><ellipse cx="32" cy="26" rx="14" ry="18" fill="#BEE3F8" stroke="#DD6B20" stroke-width="4"/><path d="M32 44v10" stroke="#DD6B20" stroke-width="4"/></svg>` },
-        { name: '披薩', svg: `<svg viewBox="0 0 64 64"><polygon points="32,12 12,48 52,48" fill="#F6AD55"/><path d="M12 48c10 4 30 4 40 0" stroke="#C05621" stroke-width="6" fill="none"/><circle cx="28" cy="32" r="3" fill="#E53E3E"/><circle cx="36" cy="40" r="3" fill="#E53E3E"/></svg>` }
+        { name: '餅乾', icon: '🍪' },
+        { name: '鏡子', icon: '🪞' },
+        { name: '披薩', icon: '🍕' },
+        { name: '朱古力', icon: '🍫' },
+        { name: '樹葉', icon: '🍃' },
+        { name: '拼圖', icon: '🧩' }
       ]
     };
 
@@ -570,7 +592,7 @@
     const summaryBox = document.getElementById('summary-box');
     const childNameInput = document.getElementById('child-name');
 
-    // Radio button handler
+    // Radio option setup
     const radioLabels = document.querySelectorAll('#classifier-options .radio-btn');
     radioLabels.forEach(label => {
       label.addEventListener('click', () => {
@@ -609,7 +631,7 @@
 
       summaryBox.innerHTML = '🎮 遊戲進行中... (In Progress)';
 
-      // Timer
+      // Countdown Timer
       gameTimer = setInterval(() => {
         timeLeft--;
         timerDisplay.textContent = timeLeft;
@@ -651,11 +673,10 @@
       const pickedItem = pool[Math.floor(Math.random() * pool.length)];
 
       const moleElem = document.getElementById(`mole-${holeIndex}`);
-      const imgBox = document.getElementById(`img-${holeIndex}`);
+      const emojiBox = document.getElementById(`emoji-${holeIndex}`);
       const labelBox = document.getElementById(`label-${holeIndex}`);
 
-      // Inject SVG Vector Graphic
-      imgBox.innerHTML = pickedItem.svg;
+      emojiBox.textContent = pickedItem.icon;
       labelBox.textContent = pickedItem.name;
 
       activeMoles[holeIndex] = {
