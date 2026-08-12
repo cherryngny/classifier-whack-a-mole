@@ -3,20 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cantonese Classifier Whack-a-Mole - SLP Edition</title>
+  <title>Cantonese Classifier Whack-a-Mole - SLP Deluxe Edition</title>
   <style>
     :root {
-      --primary: #4A90E2;
-      --secondary: #2ECC71;
-      --accent: #E74C3C;
-      --bg: #E8F5E9;
-      --wood: #8D6E63;
-      --text: #2C3E50;
+      --primary: #3A7CA5;
+      --secondary: #48BB78;
+      --accent: #E53E3E;
+      --sky: #A0C4FF;
+      --grass-light: #B5EAD7;
+      --grass-mid: #74C69D;
+      --grass-dark: #40916C;
+      --wood-light: #D4A373;
+      --wood-dark: #A3B18A;
+      --text: #2D3748;
     }
 
     body {
       font-family: "PingFang HK", "Microsoft JhengHei", sans-serif;
-      background-color: var(--bg);
+      background-color: #F4F7F6;
       color: var(--text);
       margin: 0;
       padding: 15px;
@@ -27,36 +31,40 @@
     }
 
     h1 {
-      margin: 5px 0 10px 0;
-      color: #2E7D32;
+      margin: 5px 0 12px 0;
+      color: #2D6A4F;
       text-align: center;
+      font-size: 1.8rem;
+      letter-spacing: 1px;
     }
 
     .setup-panel, .tracker-panel {
       background: white;
-      padding: 18px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-      max-width: 600px;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      max-width: 620px;
       width: 100%;
       margin-bottom: 20px;
       box-sizing: border-box;
+      border: 1px solid #E2E8F0;
     }
 
     .form-group {
-      margin-bottom: 15px;
+      margin-bottom: 16px;
     }
 
     label {
       font-weight: bold;
       display: block;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+      color: #2D6A4F;
     }
 
     .radio-group {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
+      gap: 10px;
     }
 
     .radio-btn {
@@ -64,141 +72,233 @@
       align-items: center;
       justify-content: center;
       padding: 10px;
-      background: #E8F5E9;
-      border: 2px solid #C8E6C9;
-      border-radius: 8px;
+      background: #F0F7F4;
+      border: 2px solid #B7E4C7;
+      border-radius: 10px;
       cursor: pointer;
       font-size: 1.2rem;
       font-weight: bold;
+      color: #2D6A4F;
+      transition: all 0.2s ease;
     }
 
     .radio-btn input { display: none; }
 
     .radio-btn.selected {
-      background: #2E7D32;
+      background: #52B788;
       color: white;
-      border-color: #1B5E20;
+      border-color: #2D6A4F;
+      box-shadow: 0 4px 10px rgba(82, 183, 136, 0.3);
     }
 
     button {
       width: 100%;
       padding: 12px;
       font-size: 1.1rem;
-      background: #2E7D32;
+      background: #40916C;
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       font-weight: bold;
       cursor: pointer;
       transition: background 0.2s;
+      box-shadow: 0 4px 12px rgba(64, 145, 108, 0.3);
     }
 
-    button:hover { background: #1B5E20; }
+    button:hover { background: #2D6A4F; }
 
-    /* Farm Game Environment */
+    /* Farm Game Environment Container */
     .game-container {
       position: relative;
       width: 100%;
       max-width: 640px;
-      height: 420px;
-      background: linear-gradient(to bottom, #81D4FA 0%, #A5D6A7 40%, #66BB6A 100%);
-      border-radius: 16px;
-      border: 6px solid #4CAF50;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+      height: 440px;
+      background: linear-gradient(to bottom, #C0E8F9 0%, #E2F0D9 35%, #95D5B2 100%);
+      border-radius: 20px;
+      border: 6px solid #74C69D;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
       overflow: hidden;
       margin-bottom: 15px;
     }
 
-    /* Wooden Fence Background */
-    .fence {
+    /* Sunbeams & Sky elements */
+    .sun {
       position: absolute;
-      top: 110px;
-      width: 100%;
-      height: 45px;
-      background: repeating-linear-gradient(
-        90deg,
-        #A1887F 0px,
-        #A1887F 25px,
-        #6D4C41 25px,
-        #6D4C41 30px
-      );
-      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    }
-    .fence-rail {
-      position: absolute;
-      top: 122px;
-      width: 100%;
-      height: 12px;
-      background: #5D4037;
+      top: 15px;
+      right: 25px;
+      width: 50px;
+      height: 50px;
+      background: #FFD166;
+      border-radius: 50%;
+      box-shadow: 0 0 25px #FFD166;
     }
 
-    /* Mole Hole Field Layout (5 Holes) */
-    .holes-grid {
+    /* Layered Rolling Hills Background */
+    .hill-back {
       position: absolute;
-      top: 160px;
+      top: 110px;
+      left: -20px;
+      width: 680px;
+      height: 120px;
+      background: #B7E4C7;
+      border-radius: 50%;
+    }
+
+    .hill-front {
+      position: absolute;
+      top: 135px;
+      right: -30px;
+      width: 700px;
+      height: 140px;
+      background: #95D5B2;
+      border-radius: 50%;
+    }
+
+    /* Decorative Wooden Picket Fence */
+    .fence-container {
+      position: absolute;
+      top: 105px;
       width: 100%;
-      height: 250px;
+      height: 40px;
       display: flex;
-      flex-wrap: wrap;
       justify-content: space-around;
-      align-content: space-around;
       padding: 0 10px;
       box-sizing: border-box;
     }
 
-    .hole-wrapper {
+    .picket {
+      width: 14px;
+      height: 38px;
+      background: #D4A373;
+      border-radius: 4px 4px 0 0;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.15);
       position: relative;
-      width: 100px;
-      height: 100px;
+    }
+    .picket::after {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 0;
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+      border-bottom: 6px solid #D4A373;
     }
 
-    /* Hole Mound */
-    .hole {
+    .fence-bar {
+      position: absolute;
+      top: 120px;
+      width: 100%;
+      height: 8px;
+      background: #BC6C25;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+
+    /* Scattered Organic Hole Layout */
+    .mole-spot {
+      position: absolute;
+      width: 110px;
+      height: 110px;
+    }
+
+    /* Hole Positions (Natural Asymmetric Layout) */
+    .spot-0 { top: 180px; left: 8%; }
+    .spot-1 { top: 165px; left: 40%; }
+    .spot-2 { top: 185px; right: 8%; }
+    .spot-3 { top: 285px; left: 22%; }
+    .spot-4 { top: 295px; right: 20%; }
+
+    /* Grassy Dirt Mound / Hole */
+    .hole-mound {
       position: absolute;
       bottom: 0;
       width: 100%;
-      height: 38px;
-      background: #4E342E;
+      height: 42px;
+      background: radial-gradient(ellipse at center, #523A28 0%, #3C2A1E 100%);
       border-radius: 50%;
-      box-shadow: inset 0 6px 8px rgba(0,0,0,0.6), 0 4px 0 #388E3C;
+      box-shadow: inset 0 8px 10px rgba(0,0,0,0.7), 0 4px 0 #40916C;
+      z-index: 3;
+    }
+
+    /* Little Grass Tufts Around Mound */
+    .grass-tuft {
+      position: absolute;
+      bottom: 6px;
+      width: 100%;
+      height: 12px;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .grass-tuft::before, .grass-tuft::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      background: #2D6A4F;
+      border-radius: 10px 10px 0 0;
+    }
+    .grass-tuft::before { left: 10px; width: 8px; height: 16px; transform: rotate(-15deg); }
+    .grass-tuft::after { right: 12px; width: 8px; height: 18px; transform: rotate(15deg); }
+
+    /* Cute Flowers Scattered in Farmland */
+    .flower {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: #FFF;
+      border-radius: 50%;
+      box-shadow: 0 0 0 3px #FFB703;
       z-index: 2;
     }
+    .fl-1 { top: 270px; left: 6%; }
+    .fl-2 { top: 250px; left: 52%; }
+    .fl-3 { top: 380px; right: 8%; }
 
     /* Mole Character */
     .mole {
       position: absolute;
-      bottom: 15px;
-      left: 15px;
-      width: 70px;
-      height: 75px;
-      background: #795548;
-      border-radius: 35px 35px 10px 10px;
+      bottom: 12px;
+      left: 18px;
+      width: 74px;
+      height: 85px;
+      background: linear-gradient(to right, #8D6E63, #6D4C41);
+      border-radius: 38px 38px 12px 12px;
       transition: bottom 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      z-index: 1;
+      z-index: 2;
       display: flex;
       flex-direction: column;
       align-items: center;
       cursor: pointer;
-      box-shadow: inset -4px -4px 0 rgba(0,0,0,0.2);
+      box-shadow: inset -5px -4px 0 rgba(0,0,0,0.25);
     }
 
     .mole.up {
-      bottom: 30px;
+      bottom: 32px;
     }
 
-    /* Image Displayed Above Mole Head */
+    /* Picture Badge Moved ABOVE Head (Floating Bubble/Sign) */
     .mole-card {
       position: absolute;
-      top: -42px;
-      width: 58px;
-      height: 58px;
+      top: -68px; /* Positioned fully above head so eyes stay 100% visible */
+      width: 64px;
+      height: 64px;
       background: white;
-      border: 3px solid var(--primary);
-      border-radius: 8px;
+      border: 3.5px solid var(--primary);
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+      z-index: 10;
+    }
+
+    /* Cute Stem/Stick connecting Card to Head */
+    .mole-card::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      width: 4px;
+      height: 10px;
+      background: #B0BEC5;
     }
 
     .mole-img {
@@ -207,109 +307,153 @@
       object-fit: contain;
     }
 
-    /* Mole Facial Features */
-    .mole-snout {
-      width: 32px;
-      height: 20px;
-      background: #D7CCC8;
-      border-radius: 12px;
-      margin-top: 24px;
-      position: relative;
-    }
-
-    .mole-nose {
-      width: 10px;
-      height: 8px;
-      background: #3E2723;
-      border-radius: 5px;
+    /* Fully Detailed Cute Facial Features */
+    .mole-eyes-container {
       position: absolute;
-      top: 3px;
-      left: 11px;
+      top: 18px;
+      width: 44px;
+      display: flex;
+      justify-content: space-between;
     }
 
     .mole-eye {
-      width: 6px;
-      height: 6px;
-      background: black;
+      width: 8px;
+      height: 8px;
+      background: #111;
+      border-radius: 50%;
+      position: relative;
+    }
+    
+    /* Eye shine pupil */
+    .mole-eye::after {
+      content: '';
+      position: absolute;
+      top: 1px;
+      left: 1px;
+      width: 3px;
+      height: 3px;
+      background: white;
+      border-radius: 50%;
+    }
+
+    /* Rosy Pink Cheeks */
+    .mole-cheek {
+      width: 8px;
+      height: 5px;
+      background: #FF85A1;
       border-radius: 50%;
       position: absolute;
-      top: 16px;
+      top: 28px;
+      opacity: 0.7;
     }
-    .mole-eye.left { left: 18px; }
-    .mole-eye.right { right: 18px; }
+    .mole-cheek.left { left: 10px; }
+    .mole-cheek.right { right: 10px; }
 
-    /* Pop-Up Whack FX */
+    /* Snout, Nose & Teeth */
+    .mole-snout {
+      width: 34px;
+      height: 22px;
+      background: #E0D6D3;
+      border-radius: 14px;
+      margin-top: 26px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+    }
+
+    .mole-nose {
+      width: 12px;
+      height: 9px;
+      background: #FFB5A7;
+      border-radius: 6px;
+      position: absolute;
+      top: 2px;
+    }
+
+    .mole-tooth {
+      width: 5px;
+      height: 6px;
+      background: white;
+      position: absolute;
+      bottom: -4px;
+      border-radius: 0 0 2px 2px;
+      border: 1px solid #D4A373;
+    }
+
+    /* Whack Pop-Up Effects (+1 / ✗) */
     .hit-fx {
       position: absolute;
-      top: -20px;
-      font-size: 1.5rem;
+      top: -35px;
+      font-size: 1.8rem;
       font-weight: bold;
       pointer-events: none;
       animation: popAndFade 0.6s forwards;
-      z-index: 10;
+      z-index: 20;
     }
-    .hit-fx.correct { color: #2ECC71; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-    .hit-fx.wrong { color: #E74C3C; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+    .hit-fx.correct { color: #2ECC71; text-shadow: 0 2px 6px rgba(0,0,0,0.4); }
+    .hit-fx.wrong { color: #E53E3E; text-shadow: 0 2px 6px rgba(0,0,0,0.4); }
 
     @keyframes popAndFade {
       0% { opacity: 1; transform: translateY(0) scale(1); }
-      100% { opacity: 0; transform: translateY(-30px) scale(1.3); }
+      100% { opacity: 0; transform: translateY(-35px) scale(1.3); }
     }
 
-    /* Game Controls Bar */
+    /* Scoreboard Bar */
     .game-controls {
       display: flex;
       justify-content: space-between;
       align-items: center;
       max-width: 640px;
       width: 100%;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       font-weight: bold;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
     }
 
     .score-badge {
       background: white;
-      padding: 6px 14px;
+      padding: 8px 16px;
       border-radius: 20px;
-      border: 2px solid var(--primary);
+      border: 2px solid #74C69D;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
     }
 
-    /* Data Tracker Panel */
+    /* Tracker Panel */
     .tracker-panel {
-      border: 2px solid #2E7D32;
-      background: #F1F8E9;
+      border: 2px solid #52B788;
+      background: #F4F9F6;
     }
 
     .tracker-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 2px solid #C8E6C9;
-      padding-bottom: 6px;
-      margin-bottom: 12px;
+      border-bottom: 2px solid #B7E4C7;
+      padding-bottom: 8px;
+      margin-bottom: 14px;
     }
 
     .tracker-header h2 {
       margin: 0;
-      font-size: 1.2rem;
-      color: #2E7D32;
+      font-size: 1.25rem;
+      color: #2D6A4F;
     }
 
     .export-btn {
       width: auto;
-      padding: 6px 12px;
+      padding: 6px 14px;
       font-size: 0.85rem;
-      background: #2E7D32;
+      background: #40916C;
     }
 
     .summary-box {
       background: white;
-      padding: 12px;
-      border-radius: 8px;
+      padding: 14px;
+      border-radius: 10px;
       font-weight: bold;
       font-size: 0.95rem;
-      border: 1px dashed #2E7D32;
+      border: 1px dashed #52B788;
+      line-height: 1.6;
     }
 
     .hidden { display: none !important; }
@@ -340,68 +484,86 @@
 
   <!-- Game Controls Bar -->
   <div id="game-controls" class="game-controls hidden">
-    <button id="reset-btn" style="width: auto; padding: 6px 16px; font-size: 0.95rem;">← 返回設定 Setup</button>
-    <div class="score-badge">目標量詞: <span id="target-display" style="color:#2E7D32;">-</span></div>
+    <button id="reset-btn" style="width: auto; padding: 6px 16px; font-size: 0.9rem;">← 返回設定 Setup</button>
+    <div class="score-badge">目標量詞: <span id="target-display" style="color:#2D6A4F;">-</span></div>
     <div class="score-badge">得分: <span id="score-display" style="color:var(--primary);">0</span></div>
     <div class="score-badge">剩餘時間: <span id="timer-display" style="color:var(--accent);">30</span>s</div>
   </div>
 
-  <!-- Farm Game Field -->
+  <!-- Farm Game Field Container -->
   <div id="game-container" class="game-container hidden">
-    <div class="fence"></div>
-    <div class="fence-rail"></div>
+    <div class="sun"></div>
+    <div class="hill-back"></div>
+    <div class="hill-front"></div>
 
-    <div class="holes-grid">
-      <!-- 5 Hole Spots -->
-      <div class="hole-wrapper">
-        <div class="mole" id="mole-0">
-          <div class="mole-card"><img src="" class="mole-img" id="img-0" alt=""></div>
-          <div class="mole-eye left"></div>
-          <div class="mole-eye right"></div>
-          <div class="mole-snout"><div class="mole-nose"></div></div>
-        </div>
-        <div class="hole"></div>
-      </div>
+    <!-- Picket Fence -->
+    <div class="fence-bar"></div>
+    <div class="fence-container">
+      <div class="picket"></div><div class="picket"></div>
+      <div class="picket"></div><div class="picket"></div>
+      <div class="picket"></div><div class="picket"></div>
+      <div class="picket"></div><div class="picket"></div>
+    </div>
 
-      <div class="hole-wrapper">
-        <div class="mole" id="mole-1">
-          <div class="mole-card"><img src="" class="mole-img" id="img-1" alt=""></div>
-          <div class="mole-eye left"></div>
-          <div class="mole-eye right"></div>
-          <div class="mole-snout"><div class="mole-nose"></div></div>
-        </div>
-        <div class="hole"></div>
-      </div>
+    <!-- Farmland Flowers -->
+    <div class="flower fl-1"></div>
+    <div class="flower fl-2"></div>
+    <div class="flower fl-3"></div>
 
-      <div class="hole-wrapper">
-        <div class="mole" id="mole-2">
-          <div class="mole-card"><img src="" class="mole-img" id="img-2" alt=""></div>
-          <div class="mole-eye left"></div>
-          <div class="mole-eye right"></div>
-          <div class="mole-snout"><div class="mole-nose"></div></div>
-        </div>
-        <div class="hole"></div>
+    <!-- 5 Organic Scattered Mole Spots -->
+    <div class="mole-spot spot-0">
+      <div class="mole" id="mole-0">
+        <div class="mole-card"><img src="" class="mole-img" id="img-0" alt=""></div>
+        <div class="mole-eyes-container"><div class="mole-eye"></div><div class="mole-eye"></div></div>
+        <div class="mole-cheek left"></div><div class="mole-cheek right"></div>
+        <div class="mole-snout"><div class="mole-nose"></div><div class="mole-tooth"></div></div>
       </div>
+      <div class="hole-mound"></div>
+      <div class="grass-tuft"></div>
+    </div>
 
-      <div class="hole-wrapper">
-        <div class="mole" id="mole-3">
-          <div class="mole-card"><img src="" class="mole-img" id="img-3" alt=""></div>
-          <div class="mole-eye left"></div>
-          <div class="mole-eye right"></div>
-          <div class="mole-snout"><div class="mole-nose"></div></div>
-        </div>
-        <div class="hole"></div>
+    <div class="mole-spot spot-1">
+      <div class="mole" id="mole-1">
+        <div class="mole-card"><img src="" class="mole-img" id="img-1" alt=""></div>
+        <div class="mole-eyes-container"><div class="mole-eye"></div><div class="mole-eye"></div></div>
+        <div class="mole-cheek left"></div><div class="mole-cheek right"></div>
+        <div class="mole-snout"><div class="mole-nose"></div><div class="mole-tooth"></div></div>
       </div>
+      <div class="hole-mound"></div>
+      <div class="grass-tuft"></div>
+    </div>
 
-      <div class="hole-wrapper">
-        <div class="mole" id="mole-4">
-          <div class="mole-card"><img src="" class="mole-img" id="img-4" alt=""></div>
-          <div class="mole-eye left"></div>
-          <div class="mole-eye right"></div>
-          <div class="mole-snout"><div class="mole-nose"></div></div>
-        </div>
-        <div class="hole"></div>
+    <div class="mole-spot spot-2">
+      <div class="mole" id="mole-2">
+        <div class="mole-card"><img src="" class="mole-img" id="img-2" alt=""></div>
+        <div class="mole-eyes-container"><div class="mole-eye"></div><div class="mole-eye"></div></div>
+        <div class="mole-cheek left"></div><div class="mole-cheek right"></div>
+        <div class="mole-snout"><div class="mole-nose"></div><div class="mole-tooth"></div></div>
       </div>
+      <div class="hole-mound"></div>
+      <div class="grass-tuft"></div>
+    </div>
+
+    <div class="mole-spot spot-3">
+      <div class="mole" id="mole-3">
+        <div class="mole-card"><img src="" class="mole-img" id="img-3" alt=""></div>
+        <div class="mole-eyes-container"><div class="mole-eye"></div><div class="mole-eye"></div></div>
+        <div class="mole-cheek left"></div><div class="mole-cheek right"></div>
+        <div class="mole-snout"><div class="mole-nose"></div><div class="mole-tooth"></div></div>
+      </div>
+      <div class="hole-mound"></div>
+      <div class="grass-tuft"></div>
+    </div>
+
+    <div class="mole-spot spot-4">
+      <div class="mole" id="mole-4">
+        <div class="mole-card"><img src="" class="mole-img" id="img-4" alt=""></div>
+        <div class="mole-eyes-container"><div class="mole-eye"></div><div class="mole-eye"></div></div>
+        <div class="mole-cheek left"></div><div class="mole-cheek right"></div>
+        <div class="mole-snout"><div class="mole-nose"></div><div class="mole-tooth"></div></div>
+      </div>
+      <div class="hole-mound"></div>
+      <div class="grass-tuft"></div>
     </div>
   </div>
 
@@ -494,7 +656,7 @@
     const exportImgBtn = document.getElementById('export-img-btn');
     const childNameInput = document.getElementById('child-name');
 
-    // Radio button UI handling
+    // Radio button selection
     const radioBtns = document.querySelectorAll('.radio-btn');
     radioBtns.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -523,7 +685,6 @@
       scoreDisplay.textContent = '0';
       timerDisplay.textContent = '30';
 
-      // Build pool of 10 moles (5 Targets, 5 Distractors)
       moleSequence = generateMolePool(targetClassifier);
 
       setupPanel.classList.add('hidden');
@@ -531,7 +692,6 @@
       gameContainer.classList.remove('hidden');
       trackerPanel.classList.add('hidden');
 
-      // Setup Whack Event Listeners on moles
       for (let i = 0; i < 5; i++) {
         const moleElem = document.getElementById(`mole-${i}`);
         moleElem.onclick = (e) => whackMole(i, e);
@@ -543,15 +703,12 @@
 
     function generateMolePool(targetCls) {
       const pool = [];
-      
-      // Get target items
       const targetItems = [...itemsDatabase[targetCls]];
       for (let i = 0; i < 5; i++) {
         const item = targetItems[i % targetItems.length];
         pool.push({ ...item, isTarget: true });
       }
 
-      // Get distractor items from all other classifiers
       const distractorPool = [];
       Object.keys(itemsDatabase).forEach(cls => {
         if (cls !== targetCls) {
@@ -565,7 +722,6 @@
         pool.push({ ...item, isTarget: false });
       }
 
-      // Shuffle the 10 moles
       return shuffle(pool);
     }
 
@@ -584,10 +740,10 @@
       }
 
       const moleData = moleSequence[currentMoleIndex];
-      const randomHoleIdx = Math.floor(Math.random() * 5);
+      const randomSpotIdx = Math.floor(Math.random() * 5);
 
-      const moleElem = document.getElementById(`mole-${randomHoleIdx}`);
-      const imgElem = document.getElementById(`img-${randomHoleIdx}`);
+      const moleElem = document.getElementById(`mole-${randomSpotIdx}`);
+      const imgElem = document.getElementById(`img-${randomSpotIdx}`);
 
       imgElem.src = moleData.img;
       moleElem.dataset.isTarget = moleData.isTarget;
@@ -597,17 +753,15 @@
 
       moleElem.classList.add('up');
 
-      // Mole stays up for 1.8 seconds before going back down
       activeMoleTimeout = setTimeout(() => {
         moleElem.classList.remove('up');
         currentMoleIndex++;
-        // Pause briefly before spawning next mole
         setTimeout(spawnNextMole, 400);
       }, 1800);
     }
 
-    function whackMole(holeIdx, event) {
-      const moleElem = document.getElementById(`mole-${holeIdx}`);
+    function whackMole(spotIdx, event) {
+      const moleElem = document.getElementById(`mole-${spotIdx}`);
       if (!moleElem.classList.contains('up') || moleElem.dataset.whacked === 'true') return;
 
       moleElem.dataset.whacked = 'true';
@@ -615,8 +769,7 @@
 
       const isTarget = moleElem.dataset.isTarget === 'true';
 
-      // Visual Pop-up feedback
-      showHitFX(holeIdx, isTarget ? '+1' : '✗', isTarget ? 'correct' : 'wrong');
+      showHitFX(spotIdx, isTarget ? '+1' : '✗', isTarget ? 'correct' : 'wrong');
 
       if (isTarget) {
         score++;
@@ -626,19 +779,18 @@
         distractorWhacks++;
       }
 
-      // Immediately retract whacked mole
       moleElem.classList.remove('up');
       currentMoleIndex++;
 
       setTimeout(spawnNextMole, 350);
     }
 
-    function showHitFX(holeIdx, text, type) {
-      const holeWrapper = document.querySelectorAll('.hole-wrapper')[holeIdx];
+    function showHitFX(spotIdx, text, type) {
+      const spotWrapper = document.querySelectorAll('.mole-spot')[spotIdx];
       const fx = document.createElement('div');
       fx.className = `hit-fx ${type}`;
       fx.textContent = text;
-      holeWrapper.appendChild(fx);
+      spotWrapper.appendChild(fx);
 
       setTimeout(() => fx.remove(), 600);
     }
@@ -659,7 +811,6 @@
       clearInterval(timerInterval);
       clearTimeout(activeMoleTimeout);
 
-      // Hide all moles
       for (let i = 0; i < 5; i++) {
         document.getElementById(`mole-${i}`).classList.remove('up');
       }
@@ -678,13 +829,12 @@
         document.getElementById(`mole-${i}`).classList.remove('up');
       }
 
-      // Calculate SLP summary metrics
       const totalWhacks = targetWhacks + distractorWhacks;
       const accuracy = totalWhacks > 0 ? Math.round((targetWhacks / totalWhacks) * 100) : 0;
       const targetHitRate = totalTargetsSpawned > 0 ? Math.round((targetWhacks / totalTargetsSpawned) * 100) : 0;
 
       summaryBox.innerHTML = `
-        <div>🎯 **目標量詞 (Target Classifier):** 一${targetClassifier}...</div>
+        <div>🎯 <b>目標量詞 (Target Classifier):</b> 一${targetClassifier}...</div>
         <div>得分 (Score): ${score} / 5</div>
         <div>正確打中目標 (Target Hits): ${targetWhacks} / ${totalTargetsSpawned} (${targetHitRate}%)</div>
         <div>誤打干擾項 (Distractor Hits): ${distractorWhacks}</div>
@@ -694,7 +844,6 @@
       trackerPanel.classList.remove('hidden');
     }
 
-    /* Export Performance Summary as Image */
     function exportTrackerAsImage() {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
@@ -706,20 +855,19 @@
       canvas.width = width;
       canvas.height = height;
 
-      // Card Canvas Styling
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, width, height);
 
-      ctx.strokeStyle = '#2E7D32';
+      ctx.strokeStyle = '#40916C';
       ctx.lineWidth = 4;
       ctx.strokeRect(10, 10, width - 20, height - 20);
 
-      ctx.fillStyle = '#2E7D32';
+      ctx.fillStyle = '#2D6A4F';
       ctx.font = 'bold 20px "PingFang HK", "Microsoft JhengHei", sans-serif';
       ctx.fillText('打地鼠量詞識別 - 紀錄面板', 30, 45);
 
       const today = new Date().toLocaleDateString('zh-HK');
-      ctx.fillStyle = '#2C3E50';
+      ctx.fillStyle = '#2D3748';
       ctx.font = 'bold 15px sans-serif';
       ctx.fillText(`學生名字 (Name): ${nameVal}`, 30, 75);
 
@@ -727,15 +875,14 @@
       ctx.font = '14px sans-serif';
       ctx.fillText(`日期 Date: ${today}`, 30, 98);
 
-      ctx.strokeStyle = '#C8E6C9';
+      ctx.strokeStyle = '#B7E4C7';
       ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.moveTo(30, 110);
       ctx.lineTo(width - 30, 110);
       ctx.stroke();
 
-      // Details
-      ctx.fillStyle = '#2C3E50';
+      ctx.fillStyle = '#2D3748';
       ctx.font = '15px sans-serif';
       ctx.fillText(`目標量詞 (Target Classifier): 一${targetClassifier}...`, 30, 140);
       ctx.fillText(`得分 (Score): ${score} / 5`, 30, 170);
@@ -744,11 +891,10 @@
 
       const totalWhacks = targetWhacks + distractorWhacks;
       const accuracy = totalWhacks > 0 ? Math.round((targetWhacks / totalWhacks) * 100) : 0;
-      ctx.fillStyle = '#2E7D32';
+      ctx.fillStyle = '#2D6A4F';
       ctx.font = 'bold 16px sans-serif';
       ctx.fillText(`整體正確率 (Accuracy): ${accuracy}%`, 30, 265);
 
-      // Download Trigger
       const link = document.createElement('a');
       const safeName = nameVal.replace(/[/\\?%*:|"<>]/g, '');
       link.download = `打地鼠量詞紀錄_${safeName}_${today.replace(/\//g, '-')}.png`;
