@@ -226,15 +226,15 @@
     .mole-spot {
       position: absolute;
       width: 110px;
-      height: 200px;
+      height: 220px;
     }
 
     /* Spot Placements */
-    .spot-0 { top: 100px; left: 6%; z-index: 5; }    /* Top Left */
-    .spot-1 { top: 90px; right: 12%; z-index: 5; }   /* Top Right */
-    .spot-2 { top: 175px; left: 38%; z-index: 6; }   /* Center Mid */
-    .spot-3 { top: 235px; left: 12%; z-index: 7; }   /* Bottom Left */
-    .spot-4 { top: 245px; right: 16%; z-index: 7; }  /* Bottom Right */
+    .spot-0 { top: 90px; left: 6%; z-index: 5; }     /* Top Left */
+    .spot-1 { top: 80px; right: 12%; z-index: 5; }   /* Top Right */
+    .spot-2 { top: 165px; left: 38%; z-index: 6; }   /* Center Mid */
+    .spot-3 { top: 225px; left: 12%; z-index: 7; }   /* Bottom Left */
+    .spot-4 { top: 235px; right: 16%; z-index: 7; }  /* Bottom Right */
 
     /* MASK WRAPPER - CUTS OFF EVERYTHING BELOW THE HOLE LINE */
     .mole-mask {
@@ -242,8 +242,8 @@
       top: 0;
       left: 0;
       width: 100%;
-      height: 170px;
-      overflow: hidden; /* ABSOLUTE CLIP OF MOLE AND CARD WHEN RETRACTED */
+      height: 190px;
+      overflow: hidden;
     }
 
     /* HOLE INNER SHADOW */
@@ -308,13 +308,11 @@
       cursor: pointer;
       box-shadow: inset -5px -4px 0 rgba(0,0,0,0.3);
       
-      /* TRANSFORMS COMPLETELY UNDERGROUND WHEN DOWN */
-      transform: translateY(220px);
+      transform: translateY(240px);
       transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .mole.up {
-      /* Rises up above the dirt */
       transform: translateY(0);
     }
 
@@ -331,37 +329,40 @@
     .mole-ear.left { left: -3px; }
     .mole-ear.right { right: -3px; }
 
-    /* PICTURE CARD FLOATING HIGH ABOVE THE HEAD */
+    /* ENHANCED PICTURE CARD FLOATING HIGH ABOVE THE HEAD */
     .mole-card {
       position: absolute;
-      top: -82px;
-      width: 64px;
-      height: 64px;
-      background: white;
-      border: 3.5px solid var(--primary);
-      border-radius: 12px;
+      top: -90px;
+      width: 72px;
+      height: 72px;
+      background: #FFFFFF;
+      border: 4px solid var(--primary);
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(0,0,0,0.05);
       z-index: 10;
+      padding: 4px;
+      box-sizing: border-box;
     }
 
     /* Wooden Stick */
     .mole-stick {
       position: absolute;
-      top: -20px;
-      width: 5px;
-      height: 22px;
+      top: -22px;
+      width: 6px;
+      height: 24px;
       background: #8D5B4C;
       border-radius: 2px;
       box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
     }
 
     .mole-img {
-      width: 86%;
-      height: 86%;
+      width: 100%;
+      height: 100%;
       object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
     }
 
     /* FACIAL FEATURES */
@@ -543,7 +544,7 @@
     <div class="flower fl-3"></div>
     <div class="flower fl-4"></div>
 
-    <!-- 5 Organic Scattered Hole Spots with Mask Clipping -->
+    <!-- 5 Organic Scattered Hole Spots -->
     <div class="mole-spot spot-0">
       <div class="mole-mask">
         <div class="hole-bg"></div>
@@ -833,11 +834,12 @@
 
         moleEl.classList.add('up');
 
+        // Extended appearing time: 2000ms (2 seconds)
         setTimeout(() => {
           if (moleEl.classList.contains('up')) {
             moleEl.classList.remove('up');
           }
-        }, 1800);
+        }, 2000);
       }
 
       const nextInterval = Math.floor(Math.random() * 600) + 600;
