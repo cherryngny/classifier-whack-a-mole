@@ -15,7 +15,7 @@
     }
 
     body {
-      font-family: "PingFang HK", "Microsoft JhengHei", -apple-system, BlinkMacSystemFont, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+      font-family: "PingFang HK", "Microsoft JhengHei", -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: #F4F7F6;
       color: var(--text);
       margin: 0;
@@ -100,12 +100,12 @@
 
     button:hover { background: #2D6A4F; }
 
-    /* Game Environment */
+    /* Game Environment Container */
     .game-container {
       position: relative;
       width: 100%;
       max-width: 640px;
-      height: 500px;
+      height: 520px;
       background: linear-gradient(to bottom, #C0E8F9 0%, #E2F0D9 35%, #95D5B2 100%);
       border-radius: 20px;
       border: 6px solid #74C69D;
@@ -114,19 +114,20 @@
       margin-bottom: 15px;
     }
 
-    /* Scattered Mole Spots */
+    /* Hole Locations with strict Z-index stacking */
     .mole-spot {
       position: absolute;
       width: 140px;
-      height: 220px;
+      height: 240px;
     }
 
-    .spot-0 { top: 160px; left: 6%; z-index: 5; }
-    .spot-1 { top: 150px; right: 8%; z-index: 5; }
-    .spot-2 { top: 230px; left: 36%; z-index: 6; }
-    .spot-3 { top: 285px; left: 10%; z-index: 7; }
-    .spot-4 { top: 295px; right: 12%; z-index: 7; }
+    .spot-0 { top: 120px; left: 6%; z-index: 5; }
+    .spot-1 { top: 110px; right: 8%; z-index: 5; }
+    .spot-2 { top: 200px; left: 36%; z-index: 6; }
+    .spot-3 { top: 260px; left: 10%; z-index: 7; }
+    .spot-4 { top: 270px; right: 12%; z-index: 7; }
 
+    /* Fix clipping: wrapper expands high enough so cards are never sliced off */
     .clipping-wrapper {
       position: absolute;
       top: 0;
@@ -134,17 +135,18 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
+      z-index: 10;
     }
 
     .hole-mound {
       position: absolute;
       bottom: 0;
       width: 100%;
-      height: 44px;
+      height: 46px;
       background: radial-gradient(ellipse at center, #5C3D2E 0%, #3D2314 100%);
       border-radius: 50%;
       box-shadow: inset 0 8px 12px rgba(0,0,0,0.8), 0 4px 0 #2D6A4F;
-      z-index: 10;
+      z-index: 2;
     }
 
     .grass-tuft {
@@ -152,7 +154,7 @@
       bottom: 4px;
       width: 100%;
       height: 14px;
-      z-index: 11;
+      z-index: 12;
       pointer-events: none;
     }
 
@@ -166,20 +168,20 @@
     .grass-tuft::before { left: 8px; width: 7px; height: 16px; transform: rotate(-20deg); }
     .grass-tuft::after { right: 10px; width: 7px; height: 18px; transform: rotate(20deg); }
 
-    /* Mole & Card Styling */
+    /* MOLE CHARACTER */
     .mole {
       position: absolute;
-      bottom: -200px;
+      bottom: -180px;
       left: 33px;
       width: 74px;
-      height: 105px;
+      height: 180px; /* Tall enough to house card + mole body seamlessly */
       background: linear-gradient(to right, #8D6E63, #5D4037);
       border-radius: 37px 37px 12px 12px;
       opacity: 0;
       pointer-events: none;
       transform: translateY(0);
       transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease;
-      z-index: 1;
+      z-index: 10;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -188,14 +190,14 @@
     }
 
     .mole.up {
-      transform: translateY(-265px);
+      transform: translateY(-190px);
       opacity: 1;
       pointer-events: auto;
     }
 
     .mole-card-wrapper {
       position: absolute;
-      top: -100px;
+      top: -65px;
       width: 100%;
       display: flex;
       flex-direction: column;
@@ -204,56 +206,40 @@
       pointer-events: none;
     }
 
+    /* CARD: Image Only - Clean & Unobscured */
     .mole-card {
-      width: 76px;
-      height: 76px;
+      width: 82px;
+      height: 82px;
       background: #FFFFFF;
-      border: 3.5px solid var(--primary);
-      border-radius: 14px;
+      border: 4px solid var(--primary);
+      border-radius: 16px;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       box-shadow: 0 6px 14px rgba(0,0,0,0.3);
-      padding: 2px;
+      padding: 4px;
       box-sizing: border-box;
       pointer-events: auto;
-      overflow: hidden;
     }
 
     .mole-stick {
-      width: 5px;
-      height: 30px;
+      width: 6px;
+      height: 24px;
       background: #8D5B4C;
       border-radius: 2px;
-      margin-top: -4px;
+      margin-top: -2px;
     }
 
-    .mole-emoji-box {
-      font-size: 2rem;
-      line-height: 1.1;
-      width: 100%;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    .mole-canvas {
+      width: 70px;
+      height: 70px;
+      display: block;
     }
 
-    .mole-label {
-      font-size: 0.8rem;
-      font-weight: bold;
-      color: #2D3748;
-      margin-top: 2px;
-      text-align: center;
-      white-space: nowrap;
-    }
-
-    /* Face Details */
+    /* FACIAL FEATURES */
     .mole-ear {
       position: absolute;
-      top: 10px;
+      top: 25px;
       width: 12px;
       height: 14px;
       background: #D7CCC8;
@@ -265,7 +251,7 @@
 
     .mole-eyes-container {
       position: absolute;
-      top: 26px;
+      top: 40px;
       width: 44px;
       display: flex;
       justify-content: space-between;
@@ -296,7 +282,7 @@
       height: 22px;
       background: #E0D6D3;
       border-radius: 14px;
-      margin-top: 36px;
+      margin-top: 50px;
       position: relative;
       display: flex;
       justify-content: center;
@@ -312,11 +298,11 @@
       top: 2px;
     }
 
-    /* Hit FX */
+    /* Whack FX */
     .hit-fx {
       position: absolute;
-      top: -115px;
-      font-size: 1.8rem;
+      top: -60px;
+      font-size: 2rem;
       font-weight: bold;
       pointer-events: none;
       animation: popAndFade 0.6s forwards;
@@ -330,7 +316,7 @@
       100% { opacity: 0; transform: translateY(-35px) scale(1.3); }
     }
 
-    /* Scoreboard */
+    /* Scoreboard & Controls */
     .game-controls {
       display: flex;
       justify-content: space-between;
@@ -391,8 +377,7 @@
         <div class="mole" id="mole-0">
           <div class="mole-card-wrapper">
             <div class="mole-card">
-              <div class="mole-emoji-box" id="emoji-0">🫧</div>
-              <div class="mole-label" id="label-0">泡泡</div>
+              <canvas class="mole-canvas" id="canvas-0" width="120" height="120"></canvas>
             </div>
             <div class="mole-stick"></div>
           </div>
@@ -410,8 +395,7 @@
         <div class="mole" id="mole-1">
           <div class="mole-card-wrapper">
             <div class="mole-card">
-              <div class="mole-emoji-box" id="emoji-1">🍊</div>
-              <div class="mole-label" id="label-1">橙</div>
+              <canvas class="mole-canvas" id="canvas-1" width="120" height="120"></canvas>
             </div>
             <div class="mole-stick"></div>
           </div>
@@ -429,8 +413,7 @@
         <div class="mole" id="mole-2">
           <div class="mole-card-wrapper">
             <div class="mole-card">
-              <div class="mole-emoji-box" id="emoji-2">🎂</div>
-              <div class="mole-label" id="label-2">蛋糕</div>
+              <canvas class="mole-canvas" id="canvas-2" width="120" height="120"></canvas>
             </div>
             <div class="mole-stick"></div>
           </div>
@@ -448,8 +431,7 @@
         <div class="mole" id="mole-3">
           <div class="mole-card-wrapper">
             <div class="mole-card">
-              <div class="mole-emoji-box" id="emoji-3">⚽</div>
-              <div class="mole-label" id="label-3">波</div>
+              <canvas class="mole-canvas" id="canvas-3" width="120" height="120"></canvas>
             </div>
             <div class="mole-stick"></div>
           </div>
@@ -467,8 +449,7 @@
         <div class="mole" id="mole-4">
           <div class="mole-card-wrapper">
             <div class="mole-card">
-              <div class="mole-emoji-box" id="emoji-4">🍔</div>
-              <div class="mole-label" id="label-4">漢堡包</div>
+              <canvas class="mole-canvas" id="canvas-4" width="120" height="120"></canvas>
             </div>
             <div class="mole-stick"></div>
           </div>
@@ -498,77 +479,422 @@
   </div>
 
   <script>
+    // Pure Drawing Database (Renders HTML5 Canvas Vector Graphics directly)
     const itemsDatabase = {
       '個': [
-        { name: '泡泡', icon: '🫧' },
-        { name: '橙', icon: '🍊' },
-        { name: '蛋糕', icon: '🎂' },
-        { name: '波', icon: '⚽' },
-        { name: '漢堡包', icon: '🍔' },
-        { name: '鐘', icon: '⏰' },
-        { name: '醫生', icon: '👨‍⚕️' },
-        { name: '廚師', icon: '👨‍🍳' }
+        { name: '蘋果', draw: drawApple },
+        { name: '橙', draw: drawOrange },
+        { name: '蛋糕', draw: drawCake },
+        { name: '波', draw: drawBall },
+        { name: '鐘', draw: drawClock }
       ],
       '條': [
-        { name: '魚', icon: '🐟' },
-        { name: '香蕉', icon: '🍌' },
-        { name: '褲', icon: '👖' },
-        { name: '頸巾', icon: '🧣' },
-        { name: '彩虹', icon: '🌈' },
-        { name: '蛇', icon: '🐍' },
-        { name: '裙', icon: '👗' },
-        { name: '海豚', icon: '🐬' }
+        { name: '魚', draw: drawFish },
+        { name: '香蕉', draw: drawBanana },
+        { name: '褲', draw: drawPants },
+        { name: '彩虹', draw: drawRainbow },
+        { name: '蛇', draw: drawSnake }
       ],
       '件': [
-        { name: '衫', icon: '👕' },
-        { name: '外套', icon: '🧥' },
-        { name: '背心', icon: '🦺' },
-        { name: '泳衣', icon: '🩱' }
+        { name: '衫', draw: drawShirt },
+        { name: '外套', draw: drawJacket },
+        { name: '泳衣', draw: drawSwimsuit }
       ],
       '隻': [
-        { name: '狗', icon: '🐶' },
-        { name: '貓', icon: '🐱' },
-        { name: '雀仔', icon: '🐦' },
-        { name: '兔子', icon: '🐰' },
-        { name: '烏龜', icon: '🐢' },
-        { name: '大象', icon: '🐘' },
-        { name: '鴨仔', icon: '🦆' }
+        { name: '狗', draw: drawDog },
+        { name: '貓', draw: drawCat },
+        { name: '雀仔', draw: drawBird },
+        { name: '烏龜', draw: drawTurtle }
       ],
       '粒': [
-        { name: '糖', icon: '🍬' },
-        { name: '紅豆', icon: '🫘' },
-        { name: '草莓', icon: '🍓' },
-        { name: '花生', icon: '🥜' },
-        { name: '藥丸', icon: '💊' },
-        { name: '車厘子', icon: '🍒' }
+        { name: '糖', draw: drawCandy },
+        { name: '草莓', draw: drawStrawberry },
+        { name: '車厘子', draw: drawCherry }
       ],
       '架': [
-        { name: '車', icon: '🚗' },
-        { name: '飛機', icon: '✈️' },
-        { name: '單車', icon: '🚲' },
-        { name: '巴士', icon: '🚌' },
-        { name: '直升機', icon: '🚁' },
-        { name: '消防車', icon: '🚒' },
-        { name: '地鐵', icon: '🚊' },
-        { name: '貨車', icon: '🚛' }
+        { name: '車', draw: drawCar },
+        { name: '飛機', draw: drawAirplane },
+        { name: '單車', draw: drawBicycle }
       ],
       '張': [
-        { name: '紙', icon: '📄' },
-        { name: '櫈', icon: '🪑' },
-        { name: '床', icon: '🛏️' },
-        { name: '梳化', icon: '🛋️' },
-        { name: '卡片', icon: '💳' }
+        { name: '紙', draw: drawPaper },
+        { name: '櫈', draw: drawChair },
+        { name: '床', draw: drawBed }
       ],
       '塊': [
-        { name: '餅乾', icon: '🍪' },
-        { name: '鏡子', icon: '🪞' },
-        { name: '披薩', icon: '🍕' },
-        { name: '朱古力', icon: '🍫' },
-        { name: '樹葉', icon: '🍃' },
-        { name: '拼圖', icon: '🧩' }
+        { name: '餅乾', draw: drawCookie },
+        { name: '披薩', draw: drawPizza },
+        { name: '樹葉', draw: drawLeaf }
       ]
     };
 
+    // Vector Graphics Drawing Functions
+    function drawApple(ctx) {
+      ctx.fillStyle = '#E53E3E';
+      ctx.beginPath();
+      ctx.arc(45, 65, 30, 0, Math.PI * 2);
+      ctx.arc(75, 65, 30, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#38A169';
+      ctx.beginPath();
+      ctx.ellipse(60, 30, 8, 16, Math.PI / 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawOrange(ctx) {
+      ctx.fillStyle = '#ED8936';
+      ctx.beginPath();
+      ctx.arc(60, 65, 42, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#38A169';
+      ctx.beginPath();
+      ctx.arc(60, 22, 6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawCake(ctx) {
+      ctx.fillStyle = '#ED8936';
+      ctx.fillRect(25, 60, 70, 35);
+      ctx.fillStyle = '#FFF5F5';
+      ctx.fillRect(25, 45, 70, 15);
+      ctx.fillStyle = '#E53E3E';
+      ctx.beginPath();
+      ctx.arc(60, 35, 10, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawBall(ctx) {
+      ctx.fillStyle = '#3182CE';
+      ctx.beginPath();
+      ctx.arc(60, 60, 42, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.arc(60, 60, 42, 0, Math.PI);
+      ctx.stroke();
+    }
+
+    function drawClock(ctx) {
+      ctx.fillStyle = '#EDF2F7';
+      ctx.strokeStyle = '#2D3748';
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.arc(60, 60, 40, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(60, 60);
+      ctx.lineTo(60, 32);
+      ctx.moveTo(60, 60);
+      ctx.lineTo(80, 60);
+      ctx.stroke();
+    }
+
+    function drawFish(ctx) {
+      ctx.fillStyle = '#4299E1';
+      ctx.beginPath();
+      ctx.ellipse(55, 60, 35, 22, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(85, 60);
+      ctx.lineTo(110, 40);
+      ctx.lineTo(110, 80);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.arc(35, 52, 5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawBanana(ctx) {
+      ctx.fillStyle = '#ECC94B';
+      ctx.beginPath();
+      ctx.arc(60, 40, 45, 0.2 * Math.PI, 0.9 * Math.PI);
+      ctx.lineWidth = 18;
+      ctx.strokeStyle = '#ECC94B';
+      ctx.lineCap = 'round';
+      ctx.stroke();
+    }
+
+    function drawPants(ctx) {
+      ctx.fillStyle = '#2B6CB0';
+      ctx.beginPath();
+      ctx.moveTo(30, 25);
+      ctx.lineTo(90, 25);
+      ctx.lineTo(82, 95);
+      ctx.lineTo(62, 95);
+      ctx.lineTo(60, 50);
+      ctx.lineTo(58, 95);
+      ctx.lineTo(38, 95);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function drawRainbow(ctx) {
+      const colors = ['#E53E3E', '#ECC94B', '#3182CE'];
+      for (let i = 0; i < 3; i++) {
+        ctx.strokeStyle = colors[i];
+        ctx.lineWidth = 10;
+        ctx.beginPath();
+        ctx.arc(60, 85, 45 - i * 11, Math.PI, 0);
+        ctx.stroke();
+      }
+    }
+
+    function drawSnake(ctx) {
+      ctx.strokeStyle = '#38A169';
+      ctx.lineWidth = 14;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(25, 75);
+      ctx.bezierCurveTo(40, 35, 80, 85, 95, 45);
+      ctx.stroke();
+    }
+
+    function drawShirt(ctx) {
+      ctx.fillStyle = '#319795';
+      ctx.beginPath();
+      ctx.moveTo(40, 25);
+      ctx.lineTo(80, 25);
+      ctx.lineTo(105, 45);
+      ctx.lineTo(90, 60);
+      ctx.lineTo(80, 50);
+      ctx.lineTo(80, 95);
+      ctx.lineTo(40, 95);
+      ctx.lineTo(40, 50);
+      ctx.lineTo(30, 60);
+      ctx.lineTo(15, 45);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function drawJacket(ctx) {
+      ctx.fillStyle = '#2C5282';
+      ctx.fillRect(30, 25, 60, 70);
+      ctx.fillStyle = '#ECC94B';
+      ctx.fillRect(57, 25, 6, 70);
+    }
+
+    function drawSwimsuit(ctx) {
+      ctx.fillStyle = '#ED64A6';
+      ctx.beginPath();
+      ctx.moveTo(40, 25);
+      ctx.lineTo(80, 25);
+      ctx.lineTo(75, 60);
+      ctx.lineTo(68, 95);
+      ctx.lineTo(52, 95);
+      ctx.lineTo(45, 60);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function drawDog(ctx) {
+      ctx.fillStyle = '#ED8936';
+      ctx.beginPath();
+      ctx.arc(60, 60, 32, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#C05621';
+      ctx.beginPath();
+      ctx.ellipse(28, 55, 10, 20, 0.2, 0, Math.PI * 2);
+      ctx.ellipse(92, 55, 10, 20, -0.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#2D3748';
+      ctx.beginPath();
+      ctx.arc(60, 66, 6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawCat(ctx) {
+      ctx.fillStyle = '#A0AEC0';
+      ctx.beginPath();
+      ctx.arc(60, 65, 30, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(35, 45);
+      ctx.lineTo(30, 20);
+      ctx.lineTo(50, 38);
+      ctx.moveTo(85, 45);
+      ctx.lineTo(90, 20);
+      ctx.lineTo(70, 38);
+      ctx.fill();
+    }
+
+    function drawBird(ctx) {
+      ctx.fillStyle = '#3182CE';
+      ctx.beginPath();
+      ctx.arc(55, 60, 28, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#ED8936';
+      ctx.beginPath();
+      ctx.moveTo(78, 55);
+      ctx.lineTo(102, 60);
+      ctx.lineTo(78, 68);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function drawTurtle(ctx) {
+      ctx.fillStyle = '#38A169';
+      ctx.beginPath();
+      ctx.arc(60, 60, 32, Math.PI, 0);
+      ctx.fill();
+      ctx.fillStyle = '#48BB78';
+      ctx.beginPath();
+      ctx.arc(94, 60, 10, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawCandy(ctx) {
+      ctx.fillStyle = '#ED64A6';
+      ctx.beginPath();
+      ctx.arc(60, 60, 22, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(38, 60);
+      ctx.lineTo(18, 42);
+      ctx.lineTo(18, 78);
+      ctx.closePath();
+      ctx.moveTo(82, 60);
+      ctx.lineTo(102, 42);
+      ctx.lineTo(102, 78);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function drawStrawberry(ctx) {
+      ctx.fillStyle = '#E53E3E';
+      ctx.beginPath();
+      ctx.moveTo(60, 95);
+      ctx.bezierCurveTo(20, 70, 25, 35, 60, 35);
+      ctx.bezierCurveTo(95, 35, 100, 70, 60, 95);
+      ctx.fill();
+      ctx.fillStyle = '#38A169';
+      ctx.fillRect(50, 22, 20, 14);
+    }
+
+    function drawCherry(ctx) {
+      ctx.fillStyle = '#E53E3E';
+      ctx.beginPath();
+      ctx.arc(42, 75, 18, 0, Math.PI * 2);
+      ctx.arc(78, 75, 18, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#276749';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(42, 60);
+      ctx.quadraticCurveTo(60, 25, 60, 25);
+      ctx.moveTo(78, 60);
+      ctx.quadraticCurveTo(60, 25, 60, 25);
+      ctx.stroke();
+    }
+
+    function drawCar(ctx) {
+      ctx.fillStyle = '#E53E3E';
+      ctx.fillRect(20, 55, 80, 25);
+      ctx.fillRect(38, 35, 44, 20);
+      ctx.fillStyle = '#2D3748';
+      ctx.beginPath();
+      ctx.arc(38, 80, 10, 0, Math.PI * 2);
+      ctx.arc(82, 80, 10, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawAirplane(ctx) {
+      ctx.fillStyle = '#CBD5E0';
+      ctx.beginPath();
+      ctx.ellipse(60, 60, 45, 12, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#A0AEC0';
+      ctx.beginPath();
+      ctx.moveTo(50, 60);
+      ctx.lineTo(65, 20);
+      ctx.lineTo(75, 20);
+      ctx.lineTo(65, 60);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function drawBicycle(ctx) {
+      ctx.strokeStyle = '#2D3748';
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.arc(35, 70, 18, 0, Math.PI * 2);
+      ctx.arc(85, 70, 18, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.strokeStyle = '#E53E3E';
+      ctx.beginPath();
+      ctx.moveTo(35, 70);
+      ctx.lineTo(55, 45);
+      ctx.lineTo(75, 70);
+      ctx.stroke();
+    }
+
+    function drawPaper(ctx) {
+      ctx.fillStyle = '#EDF2F7';
+      ctx.strokeStyle = '#CBD5E0';
+      ctx.lineWidth = 3;
+      ctx.fillRect(35, 25, 50, 70);
+      ctx.strokeRect(35, 25, 50, 70);
+    }
+
+    function drawChair(ctx) {
+      ctx.fillStyle = '#DD6B20';
+      ctx.fillRect(35, 50, 50, 10);
+      ctx.fillRect(35, 20, 10, 40);
+      ctx.fillRect(40, 60, 8, 35);
+      ctx.fillRect(72, 60, 8, 35);
+    }
+
+    function drawBed(ctx) {
+      ctx.fillStyle = '#3182CE';
+      ctx.fillRect(20, 55, 80, 20);
+      ctx.fillStyle = '#EDF2F7';
+      ctx.fillRect(25, 42, 25, 13);
+      ctx.fillStyle = '#744210';
+      ctx.fillRect(15, 35, 8, 45);
+    }
+
+    function drawCookie(ctx) {
+      ctx.fillStyle = '#D69E2E';
+      ctx.beginPath();
+      ctx.arc(60, 60, 36, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#744210';
+      const spots = [[45,48], [72,52], [55,75], [70,72], [42,68]];
+      spots.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p[0], p[1], 4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    function drawPizza(ctx) {
+      ctx.fillStyle = '#F6AD55';
+      ctx.beginPath();
+      ctx.moveTo(60, 20);
+      ctx.lineTo(25, 90);
+      ctx.lineTo(95, 90);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = '#E53E3E';
+      ctx.beginPath();
+      ctx.arc(50, 60, 5, 0, Math.PI * 2);
+      ctx.arc(70, 75, 5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawLeaf(ctx) {
+      ctx.fillStyle = '#48BB78';
+      ctx.beginPath();
+      ctx.moveTo(30, 90);
+      ctx.quadraticCurveTo(20, 30, 90, 30);
+      ctx.quadraticCurveTo(90, 90, 30, 90);
+      ctx.fill();
+    }
+
+    // Game Logic Engine
     let targetClassifier = '個';
     let score = 0;
     let timeLeft = 45;
@@ -668,11 +994,11 @@
       const pickedItem = pool[Math.floor(Math.random() * pool.length)];
 
       const moleElem = document.getElementById(`mole-${holeIndex}`);
-      const emojiBox = document.getElementById(`emoji-${holeIndex}`);
-      const labelBox = document.getElementById(`label-${holeIndex}`);
+      const canvasElem = document.getElementById(`canvas-${holeIndex}`);
+      const ctx = canvasElem.getContext('2d');
 
-      emojiBox.textContent = pickedItem.icon;
-      labelBox.textContent = pickedItem.name;
+      ctx.clearRect(0, 0, 120, 120);
+      pickedItem.draw(ctx);
 
       activeMoles[holeIndex] = {
         item: pickedItem,
