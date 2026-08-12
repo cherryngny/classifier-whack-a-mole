@@ -226,20 +226,31 @@
     .mole-spot {
       position: absolute;
       width: 110px;
-      height: 180px; 
+      height: 200px;
     }
 
     /* Spot Placements */
-    .spot-0 { top: 130px; left: 6%; z-index: 5; }    /* Top Left */
-    .spot-1 { top: 120px; right: 12%; z-index: 5; }  /* Top Right */
-    .spot-2 { top: 195px; left: 38%; z-index: 6; }   /* Center Mid */
-    .spot-3 { top: 255px; left: 12%; z-index: 7; }   /* Bottom Left */
-    .spot-4 { top: 265px; right: 16%; z-index: 7; }  /* Bottom Right */
+    .spot-0 { top: 100px; left: 6%; z-index: 5; }    /* Top Left */
+    .spot-1 { top: 90px; right: 12%; z-index: 5; }   /* Top Right */
+    .spot-2 { top: 175px; left: 38%; z-index: 6; }   /* Center Mid */
+    .spot-3 { top: 235px; left: 12%; z-index: 7; }   /* Bottom Left */
+    .spot-4 { top: 245px; right: 16%; z-index: 7; }  /* Bottom Right */
 
-    /* HOLE INNER SHADOW (BEHIND MOLE) */
+    /* MASK WRAPPER - CUTS OFF EVERYTHING BELOW THE HOLE LINE */
+    .mole-mask {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 170px;
+      overflow: hidden; /* ABSOLUTE CLIP OF MOLE AND CARD WHEN RETRACTED */
+    }
+
+    /* HOLE INNER SHADOW */
     .hole-bg {
       position: absolute;
       bottom: 0;
+      left: 0;
       width: 100%;
       height: 38px;
       background: #1F140E;
@@ -247,22 +258,24 @@
       z-index: 1;
     }
 
-    /* FRONT DIRT MOUND (IN FRONT OF MOLE TO HIDE IT) */
+    /* FRONT DIRT MOUND */
     .hole-mound {
       position: absolute;
-      bottom: -6px;
+      bottom: 24px;
+      left: 0;
       width: 100%;
       height: 42px;
       background: radial-gradient(ellipse at center, #5C3D2E 0%, #3D2314 100%);
       border-radius: 50%;
       box-shadow: inset 0 6px 10px rgba(0,0,0,0.6), 0 4px 0 #2D6A4F;
-      z-index: 3; /* Placed in front of mole */
-      pointer-events: none; /* Mouse clicks pass through to mole */
+      z-index: 3;
+      pointer-events: none;
     }
 
     .grass-tuft {
       position: absolute;
-      bottom: -2px;
+      bottom: 28px;
+      left: 0;
       width: 100%;
       height: 14px;
       z-index: 4;
@@ -279,7 +292,7 @@
     .grass-tuft::before { left: 8px; width: 7px; height: 16px; transform: rotate(-20deg); }
     .grass-tuft::after { right: 10px; width: 7px; height: 18px; transform: rotate(20deg); }
 
-    /* MOLE CHARACTER (SLIDES DOWN BEHIND FRONT MOUND) */
+    /* MOLE CHARACTER */
     .mole {
       position: absolute;
       bottom: 12px;
@@ -288,20 +301,20 @@
       height: 100px;
       background: linear-gradient(to right, #8D6E63, #5D4037);
       border-radius: 37px 37px 12px 12px;
-      z-index: 2; /* Between hole-bg (1) and hole-mound (3) */
+      z-index: 2;
       display: flex;
       flex-direction: column;
       align-items: center;
       cursor: pointer;
       box-shadow: inset -5px -4px 0 rgba(0,0,0,0.3);
       
-      /* Shifted down 180px completely out of sight behind mound */
-      transform: translateY(180px);
+      /* TRANSFORMS COMPLETELY UNDERGROUND WHEN DOWN */
+      transform: translateY(220px);
       transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .mole.up {
-      /* Pops straight up out of hole */
+      /* Rises up above the dirt */
       transform: translateY(0);
     }
 
@@ -318,7 +331,7 @@
     .mole-ear.left { left: -3px; }
     .mole-ear.right { right: -3px; }
 
-    /* PICTURE SIGN FLOATING HIGH ABOVE THE HEAD */
+    /* PICTURE CARD FLOATING HIGH ABOVE THE HEAD */
     .mole-card {
       position: absolute;
       top: -82px;
@@ -334,7 +347,7 @@
       z-index: 10;
     }
 
-    /* Wooden Stick Holding the Sign */
+    /* Wooden Stick */
     .mole-stick {
       position: absolute;
       top: -20px;
@@ -427,7 +440,7 @@
     /* Whack FX (+1 / ✗) */
     .hit-fx {
       position: absolute;
-      top: -30px;
+      top: 0px;
       left: 35px;
       font-size: 1.8rem;
       font-weight: bold;
@@ -530,72 +543,82 @@
     <div class="flower fl-3"></div>
     <div class="flower fl-4"></div>
 
-    <!-- 5 Organic Scattered Hole Spots with Layered Depth -->
+    <!-- 5 Organic Scattered Hole Spots with Mask Clipping -->
     <div class="mole-spot spot-0">
-      <div class="hole-bg"></div>
-      <div class="mole" id="mole-0">
-        <div class="mole-ear left"></div><div class="mole-ear right"></div>
-        <div class="mole-card"><img src="" class="mole-img" id="img-0" alt=""></div>
-        <div class="mole-stick"></div>
-        <div class="mole-eyes-container"><div class="mole-eye"></div><div class="mole-eye"></div></div>
-        <div class="mole-cheek left"></div><div class="mole-cheek right"></div>
-        <div class="mole-snout"><div class="mole-nose"></div><div class="mole-tooth"></div></div>
+      <div class="mole-mask">
+        <div class="hole-bg"></div>
+        <div class="mole" id="mole-0">
+          <div class="mole-ear left"></div><div class="mole-ear right"></div>
+          <div class="mole-card"><img src="" class="mole-img" id="img-0" alt=""></div>
+          <div class="mole-stick"></div>
+          <div class="mole-eyes-container"><div class="mole-eye"></div><div class="mole-eye"></div></div>
+          <div class="mole-cheek left"></div><div class="mole-cheek right"></div>
+          <div class="mole-snout"><div class="mole-nose"></div><div class="mole-tooth"></div></div>
+        </div>
       </div>
       <div class="hole-mound"></div>
       <div class="grass-tuft"></div>
     </div>
 
     <div class="mole-spot spot-1">
-      <div class="hole-bg"></div>
-      <div class="mole" id="mole-1">
-        <div class="mole-ear left"></div><div class="mole-ear right"></div>
-        <div class="mole-card"><img src="" class="mole-img" id="img-1" alt=""></div>
-        <div class="mole-stick"></div>
-        <div class="mole-eyes-container"><div class="mole-eye"></div><div class="mole-eye"></div></div>
-        <div class="mole-cheek left"></div><div class="mole-cheek right"></div>
-        <div class="mole-snout"><div class="mole-nose"></div><div class="mole-tooth"></div></div>
+      <div class="mole-mask">
+        <div class="hole-bg"></div>
+        <div class="mole" id="mole-1">
+          <div class="mole-ear left"></div><div class="mole-ear right"></div>
+          <div class="mole-card"><img src="" class="mole-img" id="img-1" alt=""></div>
+          <div class="mole-stick"></div>
+          <div class="mole-eyes-container"><div class="mole-eye"></div><div class="mole-eye"></div></div>
+          <div class="mole-cheek left"></div><div class="mole-cheek right"></div>
+          <div class="mole-snout"><div class="mole-nose"></div><div class="mole-tooth"></div></div>
+        </div>
       </div>
       <div class="hole-mound"></div>
       <div class="grass-tuft"></div>
     </div>
 
     <div class="mole-spot spot-2">
-      <div class="hole-bg"></div>
-      <div class="mole" id="mole-2">
-        <div class="mole-ear left"></div><div class="mole-ear right"></div>
-        <div class="mole-card"><img src="" class="mole-img" id="img-2" alt=""></div>
-        <div class="mole-stick"></div>
-        <div class="mole-eyes-container"><div class="mole-eye"></div><div class="mole-eye"></div></div>
-        <div class="mole-cheek left"></div><div class="mole-cheek right"></div>
-        <div class="mole-snout"><div class="mole-nose"></div><div class="mole-tooth"></div></div>
+      <div class="mole-mask">
+        <div class="hole-bg"></div>
+        <div class="mole" id="mole-2">
+          <div class="mole-ear left"></div><div class="mole-ear right"></div>
+          <div class="mole-card"><img src="" class="mole-img" id="img-2" alt=""></div>
+          <div class="mole-stick"></div>
+          <div class="mole-eyes-container"><div class="mole-eye"></div><div class="mole-eye"></div></div>
+          <div class="mole-cheek left"></div><div class="mole-cheek right"></div>
+          <div class="mole-snout"><div class="mole-nose"></div><div class="mole-tooth"></div></div>
+        </div>
       </div>
       <div class="hole-mound"></div>
       <div class="grass-tuft"></div>
     </div>
 
     <div class="mole-spot spot-3">
-      <div class="hole-bg"></div>
-      <div class="mole" id="mole-3">
-        <div class="mole-ear left"></div><div class="mole-ear right"></div>
-        <div class="mole-card"><img src="" class="mole-img" id="img-3" alt=""></div>
-        <div class="mole-stick"></div>
-        <div class="mole-eyes-container"><div class="mole-eye"></div><div class="mole-eye"></div></div>
-        <div class="mole-cheek left"></div><div class="mole-cheek right"></div>
-        <div class="mole-snout"><div class="mole-nose"></div><div class="mole-tooth"></div></div>
+      <div class="mole-mask">
+        <div class="hole-bg"></div>
+        <div class="mole" id="mole-3">
+          <div class="mole-ear left"></div><div class="mole-ear right"></div>
+          <div class="mole-card"><img src="" class="mole-img" id="img-3" alt=""></div>
+          <div class="mole-stick"></div>
+          <div class="mole-eyes-container"><div class="mole-eye"></div><div class="mole-eye"></div></div>
+          <div class="mole-cheek left"></div><div class="mole-cheek right"></div>
+          <div class="mole-snout"><div class="mole-nose"></div><div class="mole-tooth"></div></div>
+        </div>
       </div>
       <div class="hole-mound"></div>
       <div class="grass-tuft"></div>
     </div>
 
     <div class="mole-spot spot-4">
-      <div class="hole-bg"></div>
-      <div class="mole" id="mole-4">
-        <div class="mole-ear left"></div><div class="mole-ear right"></div>
-        <div class="mole-card"><img src="" class="mole-img" id="img-4" alt=""></div>
-        <div class="mole-stick"></div>
-        <div class="mole-eyes-container"><div class="mole-eye"></div><div class="mole-eye"></div></div>
-        <div class="mole-cheek left"></div><div class="mole-cheek right"></div>
-        <div class="mole-snout"><div class="mole-nose"></div><div class="mole-tooth"></div></div>
+      <div class="mole-mask">
+        <div class="hole-bg"></div>
+        <div class="mole" id="mole-4">
+          <div class="mole-ear left"></div><div class="mole-ear right"></div>
+          <div class="mole-card"><img src="" class="mole-img" id="img-4" alt=""></div>
+          <div class="mole-stick"></div>
+          <div class="mole-eyes-container"><div class="mole-eye"></div><div class="mole-eye"></div></div>
+          <div class="mole-cheek left"></div><div class="mole-cheek right"></div>
+          <div class="mole-snout"><div class="mole-nose"></div><div class="mole-tooth"></div></div>
+        </div>
       </div>
       <div class="hole-mound"></div>
       <div class="grass-tuft"></div>
