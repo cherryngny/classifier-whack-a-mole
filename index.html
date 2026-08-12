@@ -239,10 +239,10 @@
     /* MASK WRAPPER - EXTENDED HEADROOM PREVENTS CARD CROPPING */
     .mole-mask {
       position: absolute;
-      top: -100px; /* Extended 100px upwards so picture cards are never cut off */
+      top: -100px; 
       left: 0;
       width: 100%;
-      height: 290px; /* Total height adjusted to maintain identical bottom clip line */
+      height: 290px; 
       overflow: hidden;
     }
 
@@ -766,9 +766,19 @@
     document.getElementById('export-img-btn').addEventListener('click', () => window.print());
 
     function getRandomItem() {
-      const allClassifiers = Object.keys(itemsDatabase);
+      // Exclude '件' and '個' from appearing together in the same round
+      let availableClassifiers = Object.keys(itemsDatabase);
+      if (targetClassifier === '件') {
+        availableClassifiers = availableClassifiers.filter(c => c !== '個');
+      } else if (targetClassifier === '個') {
+        availableClassifiers = availableClassifiers.filter(c => c !== '件');
+      }
+
       const isTarget = Math.random() < 0.5;
-      const selectedClassifier = isTarget ? targetClassifier : allClassifiers[Math.floor(Math.random() * allClassifiers.length)];
+      const selectedClassifier = isTarget 
+        ? targetClassifier 
+        : availableClassifiers[Math.floor(Math.random() * availableClassifiers.length)];
+
       const items = itemsDatabase[selectedClassifier];
       const selectedItem = items[Math.floor(Math.random() * items.length)];
       
