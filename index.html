@@ -222,7 +222,7 @@
     .fl-3 { top: 390px; right: 6%; }
     .fl-4 { top: 410px; left: 42%; box-shadow: 0 0 0 3px #FF85A1; }
 
-    /* ORGANIC SCATTERED MOLE SPOTS WITH STRICT CLIPPING MASK */
+    /* ORGANIC SCATTERED MOLE SPOTS */
     .mole-spot {
       position: absolute;
       width: 120px;
@@ -236,17 +236,18 @@
     .spot-3 { top: 265px; left: 12%; z-index: 7; }   /* Bottom Left */
     .spot-4 { top: 275px; right: 16%; z-index: 7; }  /* Bottom Right */
 
-    /* HARD CLIPPING WRAPPER FOR MOLE SLIDE-IN */
+    /* HARD GPU CLIPPING WRAPPER FOR MOLE */
     .mound-wrapper {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      overflow: hidden; /* CUTS OFF EVERYTHING BELOW DIRT LINE */
+      overflow: hidden;
+      clip-path: inset(0 0 0 0); /* Enforces strict layer boundary */
     }
 
-    /* Dirt Hole Mound - Sits ON TOP of the mole */
+    /* Dirt Hole Mound - Forefront layer */
     .hole-mound {
       position: absolute;
       bottom: 0;
@@ -255,7 +256,7 @@
       background: radial-gradient(ellipse at center, #5C3D2E 0%, #3D2314 100%);
       border-radius: 50%;
       box-shadow: inset 0 8px 12px rgba(0,0,0,0.8), 0 4px 0 #2D6A4F;
-      z-index: 10; /* Forefront over mole body */
+      z-index: 10;
     }
 
     .grass-tuft {
@@ -277,18 +278,20 @@
     .grass-tuft::before { left: 8px; width: 7px; height: 16px; transform: rotate(-20deg); }
     .grass-tuft::after { right: 10px; width: 7px; height: 18px; transform: rotate(20deg); }
 
-    /* MOLE CHARACTER - COMPLETELY BURIED DEEP UNDERGROUND WHEN INACTIVE */
+    /* MOLE CHARACTER */
     .mole {
       position: absolute;
-      bottom: -180px; /* DEEP BURIAL BELOW WRAPPER MASK */
+      bottom: -180px;
       left: 23px;
       width: 74px;
       height: 100px;
       background: linear-gradient(to right, #8D6E63, #5D4037);
       border-radius: 37px 37px 12px 12px;
-      transition: transform 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      opacity: 0; /* FAILSAFE 1: Zero opacity when buried */
+      pointer-events: none; /* FAILSAFE 2: Unclickable when buried */
       transform: translateY(0);
-      z-index: 1; /* Sits behind hole mound */
+      transition: transform 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.15s ease;
+      z-index: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -296,9 +299,11 @@
       box-shadow: inset -5px -4px 0 rgba(0,0,0,0.3);
     }
 
-    /* POP-UP ANIMATION VIA TRANSLATEY (SMOOTHER & RELIABLE) */
+    /* POP-UP STATE */
     .mole.up {
-      transform: translateY(-205px); /* Pops up cleanly above dirt rim */
+      transform: translateY(-205px);
+      opacity: 1; /* Appears only during pop up */
+      pointer-events: auto;
     }
 
     /* MOLE EARS */
@@ -609,7 +614,6 @@
   </div>
 
   <script>
-    // FULL VERIFIED STABLE DATABASE
     const itemsDatabase = {
       '個': [
         { name: '蘋果', img: 'https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.png' },
@@ -803,14 +807,14 @@
       const moleElem = document.getElementById(`mole-${randomSpotIdx}`);
       const imgElem = document.getElementById(`img-${randomSpotIdx}`);
 
-      // 1. UPDATE IMAGE & DATA FIRST WHILE BURIED UNDERGROUND
+      // 1. Swap picture while invisible/buried
       imgElem.src = moleData.img;
       moleElem.dataset.isTarget = moleData.isTarget;
       moleElem.dataset.whacked = 'false';
 
       if (moleData.isTarget) totalTargetsSpawned++;
 
-      // 2. TRIGGER POP-UP ANIMATION AFTER A TINY BUFFER SO NO MID-AIR SWAP OCCURS
+      // 2. Pop up smoothly
       setTimeout(() => {
         moleElem.classList.add('up');
       }, 50);
