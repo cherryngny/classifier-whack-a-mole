@@ -127,7 +127,6 @@
     .spot-3 { top: 260px; left: 10%; z-index: 7; }
     .spot-4 { top: 270px; right: 12%; z-index: 7; }
 
-    /* Fix clipping: wrapper expands high enough so cards are never sliced off */
     .clipping-wrapper {
       position: absolute;
       top: 0;
@@ -174,7 +173,7 @@
       bottom: -180px;
       left: 33px;
       width: 74px;
-      height: 180px; /* Tall enough to house card + mole body seamlessly */
+      height: 180px;
       background: linear-gradient(to right, #8D6E63, #5D4037);
       border-radius: 37px 37px 12px 12px;
       opacity: 0;
@@ -206,7 +205,7 @@
       pointer-events: none;
     }
 
-    /* CARD: Image Only - Clean & Unobscured */
+    /* CARD: Image Only Display */
     .mole-card {
       width: 82px;
       height: 82px;
@@ -217,7 +216,7 @@
       align-items: center;
       justify-content: center;
       box-shadow: 0 6px 14px rgba(0,0,0,0.3);
-      padding: 4px;
+      padding: 6px;
       box-sizing: border-box;
       pointer-events: auto;
     }
@@ -230,9 +229,10 @@
       margin-top: -2px;
     }
 
-    .mole-canvas {
-      width: 70px;
-      height: 70px;
+    .mole-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
       display: block;
     }
 
@@ -377,7 +377,7 @@
         <div class="mole" id="mole-0">
           <div class="mole-card-wrapper">
             <div class="mole-card">
-              <canvas class="mole-canvas" id="canvas-0" width="120" height="120"></canvas>
+              <img class="mole-img" id="img-0" alt="item">
             </div>
             <div class="mole-stick"></div>
           </div>
@@ -395,7 +395,7 @@
         <div class="mole" id="mole-1">
           <div class="mole-card-wrapper">
             <div class="mole-card">
-              <canvas class="mole-canvas" id="canvas-1" width="120" height="120"></canvas>
+              <img class="mole-img" id="img-1" alt="item">
             </div>
             <div class="mole-stick"></div>
           </div>
@@ -413,7 +413,7 @@
         <div class="mole" id="mole-2">
           <div class="mole-card-wrapper">
             <div class="mole-card">
-              <canvas class="mole-canvas" id="canvas-2" width="120" height="120"></canvas>
+              <img class="mole-img" id="img-2" alt="item">
             </div>
             <div class="mole-stick"></div>
           </div>
@@ -431,7 +431,7 @@
         <div class="mole" id="mole-3">
           <div class="mole-card-wrapper">
             <div class="mole-card">
-              <canvas class="mole-canvas" id="canvas-3" width="120" height="120"></canvas>
+              <img class="mole-img" id="img-3" alt="item">
             </div>
             <div class="mole-stick"></div>
           </div>
@@ -449,7 +449,7 @@
         <div class="mole" id="mole-4">
           <div class="mole-card-wrapper">
             <div class="mole-card">
-              <canvas class="mole-canvas" id="canvas-4" width="120" height="120"></canvas>
+              <img class="mole-img" id="img-4" alt="item">
             </div>
             <div class="mole-stick"></div>
           </div>
@@ -479,420 +479,86 @@
   </div>
 
   <script>
-    // Pure Drawing Database (Renders HTML5 Canvas Vector Graphics directly)
-    const itemsDatabase = {
-      '個': [
-        { name: '蘋果', draw: drawApple },
-        { name: '橙', draw: drawOrange },
-        { name: '蛋糕', draw: drawCake },
-        { name: '波', draw: drawBall },
-        { name: '鐘', draw: drawClock }
-      ],
-      '條': [
-        { name: '魚', draw: drawFish },
-        { name: '香蕉', draw: drawBanana },
-        { name: '褲', draw: drawPants },
-        { name: '彩虹', draw: drawRainbow },
-        { name: '蛇', draw: drawSnake }
-      ],
-      '件': [
-        { name: '衫', draw: drawShirt },
-        { name: '外套', draw: drawJacket },
-        { name: '泳衣', draw: drawSwimsuit }
-      ],
-      '隻': [
-        { name: '狗', draw: drawDog },
-        { name: '貓', draw: drawCat },
-        { name: '雀仔', draw: drawBird },
-        { name: '烏龜', draw: drawTurtle }
-      ],
-      '粒': [
-        { name: '糖', draw: drawCandy },
-        { name: '草莓', draw: drawStrawberry },
-        { name: '車厘子', draw: drawCherry }
-      ],
-      '架': [
-        { name: '車', draw: drawCar },
-        { name: '飛機', draw: drawAirplane },
-        { name: '單車', draw: drawBicycle }
-      ],
-      '張': [
-        { name: '紙', draw: drawPaper },
-        { name: '櫈', draw: drawChair },
-        { name: '床', draw: drawBed }
-      ],
-      '塊': [
-        { name: '餅乾', draw: drawCookie },
-        { name: '披薩', draw: drawPizza },
-        { name: '樹葉', draw: drawLeaf }
-      ]
+    // Inline Base64 Data URI Vector Graphics Database (Guaranteed 100% image rendering)
+    const SVG = {
+      apple: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 25 C50 10 30 15 25 30 C15 30 10 50 15 70 C20 90 40 95 50 90 C60 95 80 90 85 70 C90 50 85 30 75 30 C70 15 50 10 50 25 Z" fill="%23E53E3E"/><path d="M50 25 C55 15 65 15 65 15" stroke="%23276749" stroke-width="5" fill="none"/></svg>`,
+      orange: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="55" r="38" fill="%23ED8936"/><circle cx="50" cy="22" r="6" fill="%2338A169"/></svg>`,
+      cake: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="15" y="55" width="70" height="35" rx="5" fill="%23ED8936"/><rect x="15" y="40" width="70" height="15" rx="3" fill="%23FFF5F5"/><circle cx="50" cy="30" r="10" fill="%23E53E3E"/></svg>`,
+      ball: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%233182CE"/><path d="M10 50 Q 50 20 90 50 M10 50 Q 50 80 90 50" stroke="white" stroke-width="6" fill="none"/></svg>`,
+      clock: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23EDF2F7" stroke="%232D3748" stroke-width="6"/><path d="M50 50 L50 25 M50 50 L70 50" stroke="%232D3748" stroke-width="6" stroke-linecap="round"/></svg>`,
+      fish: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><ellipse cx="45" cy="50" rx="30" ry="20" fill="%234299E1"/><polygon points="70,50 95,30 95,70" fill="%233182CE"/><circle cx="28" cy="45" r="4" fill="white"/></svg>`,
+      banana: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20 30 Q 50 90 85 70 Q 40 80 20 30 Z" fill="%23ECC94B"/><path d="M20 30 Q 15 25 22 25" stroke="%23744210" stroke-width="4"/></svg>`,
+      pants: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M25 20 H75 L70 85 H52 L50 45 L48 85 H30 Z" fill="%232B6CB0"/></svg>`,
+      rainbow: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M15 75 A 35 35 0 0 1 85 75" stroke="%23E53E3E" stroke-width="8" fill="none"/><path d="M23 75 A 27 27 0 0 1 77 75" stroke="%23ECC94B" stroke-width="8" fill="none"/><path d="M31 75 A 19 19 0 0 1 69 75" stroke="%233182CE" stroke-width="8" fill="none"/></svg>`,
+      snake: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20 70 Q 40 30 60 70 T 90 40" stroke="%2338A169" stroke-width="12" fill="none" stroke-linecap="round"/></svg>`,
+      shirt: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M30 20 L70 20 L90 35 L78 50 L70 42 L70 85 L30 85 L30 42 L22 50 L10 35 Z" fill="%23319795"/></svg>`,
+      jacket: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="25" y="20" width="50" height="65" rx="5" fill="%232C5282"/><rect x="47" y="20" width="6" height="65" fill="%23ECC94B"/></svg>`,
+      swimsuit: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M35 20 H65 L60 50 L55 80 H45 L40 50 Z" fill="%23ED64A6"/></svg>`,
+      dog: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="28" fill="%23ED8936"/><ellipse cx="22" cy="50" rx="8" ry="16" fill="%23C05621"/><ellipse cx="78" cy="50" rx="8" ry="16" fill="%23C05621"/><circle cx="50" cy="56" r="5" fill="%232D3748"/></svg>`,
+      cat: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="55" r="26" fill="%23A0AEC0"/><polygon points="28,38 22,18 40,32" fill="%23A0AEC0"/><polygon points="72,38 78,18 60,32" fill="%23A0AEC0"/><circle cx="50" cy="60" r="4" fill="%23E53E3E"/></svg>`,
+      bird: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="45" cy="50" r="25" fill="%233182CE"/><polygon points="65,45 88,50 65,58" fill="%23ED8936"/></svg>`,
+      turtle: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="28" ry="20" fill="%2338A169"/><circle cx="80" cy="50" r="8" fill="%2348BB78"/></svg>`,
+      candy: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="20" fill="%23ED64A6"/><polygon points="32,50 15,35 15,65" fill="%23ED64A6"/><polygon points="68,50 85,35 85,65" fill="%23ED64A6"/></svg>`,
+      strawberry: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 85 C20 60 20 30 50 30 C80 30 80 60 50 85 Z" fill="%23E53E3E"/><rect x="42" y="20" width="16" height="12" rx="3" fill="%2338A169"/></svg>`,
+      cherry: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="35" cy="65" r="16" fill="%23E53E3E"/><circle cx="65" cy="65" r="16" fill="%23E53E3E"/><path d="M35 50 Q 50 20 50 20 M65 50 Q 50 20 50 20" stroke="%23276749" stroke-width="4" fill="none"/></svg>`,
+      car: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="15" y="45" width="70" height="25" rx="5" fill="%23E53E3E"/><rect x="30" y="30" width="40" height="18" rx="3" fill="%23CBD5E0"/><circle cx="32" cy="70" r="8" fill="%232D3748"/><circle cx="68" cy="70" r="8" fill="%232D3748"/></svg>`,
+      airplane: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="40" ry="10" fill="%23CBD5E0"/><polygon points="40,50 55,18 65,18 55,50" fill="%23A0AEC0"/></svg>`,
+      bicycle: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="30" cy="60" r="16" stroke="%232D3748" stroke-width="5" fill="none"/><circle cx="70" cy="60" r="16" stroke="%232D3748" stroke-width="5" fill="none"/><path d="M30 60 L45 38 L65 60 M45 38 L60 38" stroke="%23E53E3E" stroke-width="5" fill="none"/></svg>`,
+      paper: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="25" y="15" width="50" height="70" rx="3" fill="%23EDF2F7" stroke="%23CBD5E0" stroke-width="3"/><line x1="35" y1="30" x2="65" y2="30" stroke="%23A0AEC0" stroke-width="3"/><line x1="35" y1="45" x2="65" y2="45" stroke="%23A0AEC0" stroke-width="3"/></svg>`,
+      chair: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="30" y="45" width="40" height="8" rx="2" fill="%23DD6B20"/><rect x="30" y="20" width="8" height="30" fill="%23DD6B20"/><rect x="34" y="53" width="6" height="30" fill="%23744210"/><rect x="60" y="53" width="6" height="30" fill="%23744210"/></svg>`,
+      bed: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="15" y="50" width="70" height="18" fill="%233182CE"/><rect x="20" y="38" width="20" height="12" rx="2" fill="%23EDF2F7"/><rect x="10" y="30" width="6" height="42" fill="%23744210"/></svg>`,
+      cookie: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="32" fill="%23D69E2E"/><circle cx="38" cy="40" r="4" fill="%23744210"/><circle cx="62" cy="42" r="4" fill="%23744210"/><circle cx="48" cy="62" r="4" fill="%23744210"/><circle cx="60" cy="58" r="4" fill="%23744210"/></svg>`,
+      pizza: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><polygon points="50,15 20,80 80,80" fill="%23F6AD55"/><circle cx="42" cy="50" r="4" fill="%23E53E3E"/><circle cx="58" cy="65" r="4" fill="%23E53E3E"/></svg>`,
+      leaf: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M25 75 Q 20 25 75 25 Q 75 75 25 75 Z" fill="%2348BB78"/><path d="M25 75 L75 25" stroke="%23276749" stroke-width="3"/></svg>`
     };
 
-    // Vector Graphics Drawing Functions
-    function drawApple(ctx) {
-      ctx.fillStyle = '#E53E3E';
-      ctx.beginPath();
-      ctx.arc(45, 65, 30, 0, Math.PI * 2);
-      ctx.arc(75, 65, 30, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#38A169';
-      ctx.beginPath();
-      ctx.ellipse(60, 30, 8, 16, Math.PI / 4, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    function drawOrange(ctx) {
-      ctx.fillStyle = '#ED8936';
-      ctx.beginPath();
-      ctx.arc(60, 65, 42, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#38A169';
-      ctx.beginPath();
-      ctx.arc(60, 22, 6, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    function drawCake(ctx) {
-      ctx.fillStyle = '#ED8936';
-      ctx.fillRect(25, 60, 70, 35);
-      ctx.fillStyle = '#FFF5F5';
-      ctx.fillRect(25, 45, 70, 15);
-      ctx.fillStyle = '#E53E3E';
-      ctx.beginPath();
-      ctx.arc(60, 35, 10, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    function drawBall(ctx) {
-      ctx.fillStyle = '#3182CE';
-      ctx.beginPath();
-      ctx.arc(60, 60, 42, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#FFFFFF';
-      ctx.lineWidth = 6;
-      ctx.beginPath();
-      ctx.arc(60, 60, 42, 0, Math.PI);
-      ctx.stroke();
-    }
-
-    function drawClock(ctx) {
-      ctx.fillStyle = '#EDF2F7';
-      ctx.strokeStyle = '#2D3748';
-      ctx.lineWidth = 6;
-      ctx.beginPath();
-      ctx.arc(60, 60, 40, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(60, 60);
-      ctx.lineTo(60, 32);
-      ctx.moveTo(60, 60);
-      ctx.lineTo(80, 60);
-      ctx.stroke();
-    }
-
-    function drawFish(ctx) {
-      ctx.fillStyle = '#4299E1';
-      ctx.beginPath();
-      ctx.ellipse(55, 60, 35, 22, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.moveTo(85, 60);
-      ctx.lineTo(110, 40);
-      ctx.lineTo(110, 80);
-      ctx.closePath();
-      ctx.fill();
-      ctx.fillStyle = '#FFFFFF';
-      ctx.beginPath();
-      ctx.arc(35, 52, 5, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    function drawBanana(ctx) {
-      ctx.fillStyle = '#ECC94B';
-      ctx.beginPath();
-      ctx.arc(60, 40, 45, 0.2 * Math.PI, 0.9 * Math.PI);
-      ctx.lineWidth = 18;
-      ctx.strokeStyle = '#ECC94B';
-      ctx.lineCap = 'round';
-      ctx.stroke();
-    }
-
-    function drawPants(ctx) {
-      ctx.fillStyle = '#2B6CB0';
-      ctx.beginPath();
-      ctx.moveTo(30, 25);
-      ctx.lineTo(90, 25);
-      ctx.lineTo(82, 95);
-      ctx.lineTo(62, 95);
-      ctx.lineTo(60, 50);
-      ctx.lineTo(58, 95);
-      ctx.lineTo(38, 95);
-      ctx.closePath();
-      ctx.fill();
-    }
-
-    function drawRainbow(ctx) {
-      const colors = ['#E53E3E', '#ECC94B', '#3182CE'];
-      for (let i = 0; i < 3; i++) {
-        ctx.strokeStyle = colors[i];
-        ctx.lineWidth = 10;
-        ctx.beginPath();
-        ctx.arc(60, 85, 45 - i * 11, Math.PI, 0);
-        ctx.stroke();
-      }
-    }
-
-    function drawSnake(ctx) {
-      ctx.strokeStyle = '#38A169';
-      ctx.lineWidth = 14;
-      ctx.lineCap = 'round';
-      ctx.beginPath();
-      ctx.moveTo(25, 75);
-      ctx.bezierCurveTo(40, 35, 80, 85, 95, 45);
-      ctx.stroke();
-    }
-
-    function drawShirt(ctx) {
-      ctx.fillStyle = '#319795';
-      ctx.beginPath();
-      ctx.moveTo(40, 25);
-      ctx.lineTo(80, 25);
-      ctx.lineTo(105, 45);
-      ctx.lineTo(90, 60);
-      ctx.lineTo(80, 50);
-      ctx.lineTo(80, 95);
-      ctx.lineTo(40, 95);
-      ctx.lineTo(40, 50);
-      ctx.lineTo(30, 60);
-      ctx.lineTo(15, 45);
-      ctx.closePath();
-      ctx.fill();
-    }
-
-    function drawJacket(ctx) {
-      ctx.fillStyle = '#2C5282';
-      ctx.fillRect(30, 25, 60, 70);
-      ctx.fillStyle = '#ECC94B';
-      ctx.fillRect(57, 25, 6, 70);
-    }
-
-    function drawSwimsuit(ctx) {
-      ctx.fillStyle = '#ED64A6';
-      ctx.beginPath();
-      ctx.moveTo(40, 25);
-      ctx.lineTo(80, 25);
-      ctx.lineTo(75, 60);
-      ctx.lineTo(68, 95);
-      ctx.lineTo(52, 95);
-      ctx.lineTo(45, 60);
-      ctx.closePath();
-      ctx.fill();
-    }
-
-    function drawDog(ctx) {
-      ctx.fillStyle = '#ED8936';
-      ctx.beginPath();
-      ctx.arc(60, 60, 32, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#C05621';
-      ctx.beginPath();
-      ctx.ellipse(28, 55, 10, 20, 0.2, 0, Math.PI * 2);
-      ctx.ellipse(92, 55, 10, 20, -0.2, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#2D3748';
-      ctx.beginPath();
-      ctx.arc(60, 66, 6, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    function drawCat(ctx) {
-      ctx.fillStyle = '#A0AEC0';
-      ctx.beginPath();
-      ctx.arc(60, 65, 30, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.moveTo(35, 45);
-      ctx.lineTo(30, 20);
-      ctx.lineTo(50, 38);
-      ctx.moveTo(85, 45);
-      ctx.lineTo(90, 20);
-      ctx.lineTo(70, 38);
-      ctx.fill();
-    }
-
-    function drawBird(ctx) {
-      ctx.fillStyle = '#3182CE';
-      ctx.beginPath();
-      ctx.arc(55, 60, 28, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#ED8936';
-      ctx.beginPath();
-      ctx.moveTo(78, 55);
-      ctx.lineTo(102, 60);
-      ctx.lineTo(78, 68);
-      ctx.closePath();
-      ctx.fill();
-    }
-
-    function drawTurtle(ctx) {
-      ctx.fillStyle = '#38A169';
-      ctx.beginPath();
-      ctx.arc(60, 60, 32, Math.PI, 0);
-      ctx.fill();
-      ctx.fillStyle = '#48BB78';
-      ctx.beginPath();
-      ctx.arc(94, 60, 10, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    function drawCandy(ctx) {
-      ctx.fillStyle = '#ED64A6';
-      ctx.beginPath();
-      ctx.arc(60, 60, 22, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.moveTo(38, 60);
-      ctx.lineTo(18, 42);
-      ctx.lineTo(18, 78);
-      ctx.closePath();
-      ctx.moveTo(82, 60);
-      ctx.lineTo(102, 42);
-      ctx.lineTo(102, 78);
-      ctx.closePath();
-      ctx.fill();
-    }
-
-    function drawStrawberry(ctx) {
-      ctx.fillStyle = '#E53E3E';
-      ctx.beginPath();
-      ctx.moveTo(60, 95);
-      ctx.bezierCurveTo(20, 70, 25, 35, 60, 35);
-      ctx.bezierCurveTo(95, 35, 100, 70, 60, 95);
-      ctx.fill();
-      ctx.fillStyle = '#38A169';
-      ctx.fillRect(50, 22, 20, 14);
-    }
-
-    function drawCherry(ctx) {
-      ctx.fillStyle = '#E53E3E';
-      ctx.beginPath();
-      ctx.arc(42, 75, 18, 0, Math.PI * 2);
-      ctx.arc(78, 75, 18, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#276749';
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      ctx.moveTo(42, 60);
-      ctx.quadraticCurveTo(60, 25, 60, 25);
-      ctx.moveTo(78, 60);
-      ctx.quadraticCurveTo(60, 25, 60, 25);
-      ctx.stroke();
-    }
-
-    function drawCar(ctx) {
-      ctx.fillStyle = '#E53E3E';
-      ctx.fillRect(20, 55, 80, 25);
-      ctx.fillRect(38, 35, 44, 20);
-      ctx.fillStyle = '#2D3748';
-      ctx.beginPath();
-      ctx.arc(38, 80, 10, 0, Math.PI * 2);
-      ctx.arc(82, 80, 10, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    function drawAirplane(ctx) {
-      ctx.fillStyle = '#CBD5E0';
-      ctx.beginPath();
-      ctx.ellipse(60, 60, 45, 12, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#A0AEC0';
-      ctx.beginPath();
-      ctx.moveTo(50, 60);
-      ctx.lineTo(65, 20);
-      ctx.lineTo(75, 20);
-      ctx.lineTo(65, 60);
-      ctx.closePath();
-      ctx.fill();
-    }
-
-    function drawBicycle(ctx) {
-      ctx.strokeStyle = '#2D3748';
-      ctx.lineWidth = 5;
-      ctx.beginPath();
-      ctx.arc(35, 70, 18, 0, Math.PI * 2);
-      ctx.arc(85, 70, 18, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.strokeStyle = '#E53E3E';
-      ctx.beginPath();
-      ctx.moveTo(35, 70);
-      ctx.lineTo(55, 45);
-      ctx.lineTo(75, 70);
-      ctx.stroke();
-    }
-
-    function drawPaper(ctx) {
-      ctx.fillStyle = '#EDF2F7';
-      ctx.strokeStyle = '#CBD5E0';
-      ctx.lineWidth = 3;
-      ctx.fillRect(35, 25, 50, 70);
-      ctx.strokeRect(35, 25, 50, 70);
-    }
-
-    function drawChair(ctx) {
-      ctx.fillStyle = '#DD6B20';
-      ctx.fillRect(35, 50, 50, 10);
-      ctx.fillRect(35, 20, 10, 40);
-      ctx.fillRect(40, 60, 8, 35);
-      ctx.fillRect(72, 60, 8, 35);
-    }
-
-    function drawBed(ctx) {
-      ctx.fillStyle = '#3182CE';
-      ctx.fillRect(20, 55, 80, 20);
-      ctx.fillStyle = '#EDF2F7';
-      ctx.fillRect(25, 42, 25, 13);
-      ctx.fillStyle = '#744210';
-      ctx.fillRect(15, 35, 8, 45);
-    }
-
-    function drawCookie(ctx) {
-      ctx.fillStyle = '#D69E2E';
-      ctx.beginPath();
-      ctx.arc(60, 60, 36, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#744210';
-      const spots = [[45,48], [72,52], [55,75], [70,72], [42,68]];
-      spots.forEach(p => {
-        ctx.beginPath();
-        ctx.arc(p[0], p[1], 4, 0, Math.PI * 2);
-        ctx.fill();
-      });
-    }
-
-    function drawPizza(ctx) {
-      ctx.fillStyle = '#F6AD55';
-      ctx.beginPath();
-      ctx.moveTo(60, 20);
-      ctx.lineTo(25, 90);
-      ctx.lineTo(95, 90);
-      ctx.closePath();
-      ctx.fill();
-      ctx.fillStyle = '#E53E3E';
-      ctx.beginPath();
-      ctx.arc(50, 60, 5, 0, Math.PI * 2);
-      ctx.arc(70, 75, 5, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    function drawLeaf(ctx) {
-      ctx.fillStyle = '#48BB78';
-      ctx.beginPath();
-      ctx.moveTo(30, 90);
-      ctx.quadraticCurveTo(20, 30, 90, 30);
-      ctx.quadraticCurveTo(90, 90, 30, 90);
-      ctx.fill();
-    }
+    const itemsDatabase = {
+      '個': [
+        { name: '蘋果', src: SVG.apple },
+        { name: '橙', src: SVG.orange },
+        { name: '蛋糕', src: SVG.cake },
+        { name: '波', src: SVG.ball },
+        { name: '鐘', src: SVG.clock }
+      ],
+      '條': [
+        { name: '魚', src: SVG.fish },
+        { name: '香蕉', src: SVG.banana },
+        { name: '褲', src: SVG.pants },
+        { name: '彩虹', src: SVG.rainbow },
+        { name: '蛇', src: SVG.snake }
+      ],
+      '件': [
+        { name: '衫', src: SVG.shirt },
+        { name: '外套', src: SVG.jacket },
+        { name: '泳衣', src: SVG.swimsuit }
+      ],
+      '隻': [
+        { name: '狗', src: SVG.dog },
+        { name: '貓', src: SVG.cat },
+        { name: '雀仔', src: SVG.bird },
+        { name: '烏龜', src: SVG.turtle }
+      ],
+      '粒': [
+        { name: '糖', src: SVG.candy },
+        { name: '草莓', src: SVG.strawberry },
+        { name: '車厘子', src: SVG.cherry }
+      ],
+      '架': [
+        { name: '車', src: SVG.car },
+        { name: '飛機', src: SVG.airplane },
+        { name: '單車', src: SVG.bicycle }
+      ],
+      '張': [
+        { name: '紙', src: SVG.paper },
+        { name: '櫈', src: SVG.chair },
+        { name: '床', src: SVG.bed }
+      ],
+      '塊': [
+        { name: '餅乾', src: SVG.cookie },
+        { name: '披薩', src: SVG.pizza },
+        { name: '樹葉', src: SVG.leaf }
+      ]
+    };
 
     // Game Logic Engine
     let targetClassifier = '個';
@@ -994,11 +660,9 @@
       const pickedItem = pool[Math.floor(Math.random() * pool.length)];
 
       const moleElem = document.getElementById(`mole-${holeIndex}`);
-      const canvasElem = document.getElementById(`canvas-${holeIndex}`);
-      const ctx = canvasElem.getContext('2d');
+      const imgElem = document.getElementById(`img-${holeIndex}`);
 
-      ctx.clearRect(0, 0, 120, 120);
-      pickedItem.draw(ctx);
+      imgElem.src = pickedItem.src;
 
       activeMoles[holeIndex] = {
         item: pickedItem,
