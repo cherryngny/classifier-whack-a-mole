@@ -236,13 +236,13 @@
     .spot-3 { top: 225px; left: 12%; z-index: 7; }   /* Bottom Left */
     .spot-4 { top: 235px; right: 16%; z-index: 7; }  /* Bottom Right */
 
-    /* MASK WRAPPER - CUTS OFF EVERYTHING BELOW THE HOLE LINE */
+    /* MASK WRAPPER - EXTENDED HEADROOM PREVENTS CARD CROPPING */
     .mole-mask {
       position: absolute;
-      top: 0;
+      top: -100px; /* Extended 100px upwards so picture cards are never cut off */
       left: 0;
       width: 100%;
-      height: 190px;
+      height: 290px; /* Total height adjusted to maintain identical bottom clip line */
       overflow: hidden;
     }
 
@@ -329,7 +329,7 @@
     .mole-ear.left { left: -3px; }
     .mole-ear.right { right: -3px; }
 
-    /* ENHANCED PICTURE CARD FLOATING HIGH ABOVE THE HEAD */
+    /* PICTURE CARD FLOATING HIGH ABOVE THE HEAD */
     .mole-card {
       position: absolute;
       top: -90px;
