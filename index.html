@@ -467,4 +467,765 @@ Previously, the **"Dirt Mound"** (the surface of the hole) was sitting on a high
       border-radius: 10px;
       cursor: pointer;
       font-size: 1.2rem;
-      font-weight:
+      font-weight: bold;
+      color: #2D6A4F;
+      transition: all 0.2s ease;
+    }
+
+    .radio-btn input { display: none; }
+
+    .radio-btn.selected {
+      background: #52B788;
+      color: white;
+      border-color: #2D6A4F;
+      box-shadow: 0 4px 10px rgba(82, 183, 136, 0.3);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1.1rem;
+      background: #40916C;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+      box-shadow: 0 4px 12px rgba(64, 145, 108, 0.3);
+    }
+
+    button:hover { background: #2D6A4F; }
+
+    /* Farm Game Environment Container */
+    .game-container {
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+      height: 500px;
+      background: linear-gradient(to bottom, #C0E8F9 0%, #E2F0D9 35%, #95D5B2 100%);
+      border-radius: 20px;
+      border: 6px solid #74C69D;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      overflow: hidden;
+      margin-bottom: 15px;
+    }
+
+    /* Scattered Mole Holes Layout */
+    .mole-spot {
+      position: absolute;
+      width: 140px;
+      height: 220px;
+    }
+
+    /* Asymmetric Placement across vertical depth layers */
+    .spot-0 { top: 160px; left: 6%; z-index: 5; }    /* Top */
+    .spot-1 { top: 150px; right: 8%; z-index: 5; }   /* Top */
+    .spot-2 { top: 230px; left: 36%; z-index: 6; }   /* Middle */
+    .spot-3 { top: 285px; left: 10%; z-index: 7; }   /* Bottom */
+    .spot-4 { top: 295px; right: 12%; z-index: 7; }  /* Bottom */
+
+    /* Clipping Wrapper forces mole to hide underground */
+    .clipping-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden; 
+      clip-path: inset(0 0 0 0); 
+    }
+
+    /* Dirt Hole Mound - sitting on surface (LAYER: 10) */
+    .hole-mound {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 44px;
+      background: radial-gradient(ellipse at center, #5C3D2E 0%, #3D2314 100%);
+      border-radius: 50%;
+      box-shadow: inset 0 8px 12px rgba(0,0,0,0.8), 0 4px 0 #2D6A4F;
+      z-index: 10;
+    }
+
+    .grass-tuft {
+      position: absolute;
+      bottom: 4px;
+      width: 100%;
+      height: 14px;
+      z-index: 11;
+      pointer-events: none;
+    }
+
+    .grass-tuft::before, .grass-tuft::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      background: #1B4332;
+      border-radius: 10px 10px 0 0;
+    }
+    .grass-tuft::before { left: 8px; width: 7px; height: 16px; transform: rotate(-20deg); }
+    .grass-tuft::after { right: 10px; width: 7px; height: 18px; transform: rotate(20deg); }
+
+    /* MOLE CHARACTER */
+    .mole {
+      position: absolute;
+      bottom: -200px; /* Fully buried */
+      left: 33px;
+      width: 74px;
+      height: 105px;
+      background: linear-gradient(to right, #8D6E63, #5D4037);
+      border-radius: 37px 37px 12px 12px;
+      opacity: 0;
+      pointer-events: none; 
+      transform: translateY(0);
+      transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease;
+      z-index: 1; /* Behind mound until wrapper fix applies */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: inset -5px -4px 0 rgba(0,0,0,0.3);
+    }
+
+    /* Pop-up state - Rises very high */
+    .mole.up {
+      transform: translateY(-265px);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* --- THE FIX: NEW WRAPPER FOR SIGN ASSEMBLY --- */
+    .mole-card-wrapper {
+      position: absolute;
+      top: -100px; /* Base position for sign+stick group */
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      /* Crucially set z-index HIGHER than mound (z:10) to bring to front */
+      z-index: 15; 
+      pointer-events: none; /* Let clicks pass through to mole head if needed */
+    }
+
+    /* LARGE PICTURE CARD - FLOATING HIGH ABOVE HEAD */
+    .mole-card {
+      width: 76px;  /* Enlarged */
+      height: 76px; /* Square holds all photos completely */
+      background: white;
+      border: 3.5px solid var(--primary);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+      padding: 4px;
+      box-sizing: border-box;
+      pointer-events: auto; /* Re-enable clicks on the sign */
+    }
+
+    .mole-stick {
+      width: 5px;
+      height: 30px;
+      background: #8D5B4C;
+      border-radius: 2px;
+      margin-top: -4px; /* Connects card and stick */
+    }
+
+    .mole-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain; /* Entire picture visible without cropping */
+      display: block;
+    }
+
+    /* FACIAL FEATURES */
+    .mole-ear {
+      position: absolute;
+      top: 10px;
+      width: 12px;
+      height: 14px;
+      background: #D7CCC8;
+      border-radius: 50%;
+      border: 2px solid #5D4037;
+    }
+    .mole-ear.left { left: -3px; }
+    .mole-ear.right { right: -3px; }
+
+    .mole-eyes-container {
+      position: absolute;
+      top: 26px;
+      width: 44px;
+      display: flex;
+      justify-content: space-between;
+      z-index: 3;
+    }
+
+    .mole-eye {
+      width: 9px;
+      height: 9px;
+      background: #111;
+      border-radius: 50%;
+      position: relative;
+    }
+    
+    .mole-eye::after {
+      content: '';
+      position: absolute;
+      top: 1px;
+      left: 1px;
+      width: 3px;
+      height: 3px;
+      background: white;
+      border-radius: 50%;
+    }
+
+    .mole-snout {
+      width: 36px;
+      height: 22px;
+      background: #E0D6D3;
+      border-radius: 14px;
+      margin-top: 36px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      z-index: 3;
+    }
+
+    .mole-nose {
+      width: 12px;
+      height: 9px;
+      background: #FFB5A7;
+      border-radius: 6px;
+      position: absolute;
+      top: 2px;
+    }
+
+    /* Whack FX */
+    .hit-fx {
+      position: absolute;
+      top: -115px; /* Adjust relative to higher sign */
+      font-size: 1.8rem;
+      font-weight: bold;
+      pointer-events: none;
+      animation: popAndFade 0.6s forwards;
+      z-index: 30;
+    }
+    .hit-fx.correct { color: #2ECC71; text-shadow: 0 2px 6px rgba(0,0,0,0.5); }
+    .hit-fx.wrong { color: #E53E3E; text-shadow: 0 2px 6px rgba(0,0,0,0.5); }
+
+    @keyframes popAndFade {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-35px) scale(1.3); }
+    }
+
+    /* Scoreboard & Setup */
+    .game-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 640px;
+      width: 100%;
+      margin-bottom: 12px;
+      font-weight: bold;
+      font-size: 1.05rem;
+    }
+
+    .score-badge {
+      background: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 2px solid #52B788;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <h1>打地鼠量詞識別遊戲</h1>
+
+  <!-- Setup Panel -->
+  <div id="setup-panel" class="setup-panel">
+    <div class="form-group">
+      <label>1. 選擇目標量詞 (Target Classifier)：</label>
+      <div class="radio-group" id="classifier-options">
+        <label class="radio-btn selected"><input type="radio" name="classifier" value="個" checked>個</label>
+        <label class="radio-btn"><input type="radio" name="classifier" value="條">條</label>
+        <label class="radio-btn"><input type="radio" name="classifier" value="件">件</label>
+        <label class="radio-btn"><input type="radio" name="classifier" value="隻">隻</label>
+        <label class="radio-btn"><input type="radio" name="classifier" value="粒">粒</label>
+        <label class="radio-btn"><input type="radio" name="classifier" value="架">架</label>
+        <label class="radio-btn"><input type="radio" name="classifier" value="張">張</label>
+        <label class="radio-btn"><input type="radio" name="classifier" value="塊">塊</label>
+      </div>
+    </div>
+
+    <button id="start-btn">開始遊戲 Start Game</button>
+  </div>
+
+  <!-- Game Controls Bar -->
+  <div id="game-controls" class="game-controls hidden">
+    <button id="reset-btn" style="width: auto; padding: 6px 16px; font-size: 0.9rem;">← 返回設定 Setup</button>
+    <div class="score-badge">目標量詞: <span id="target-display" style="color:#2D6A4F;">-</span></div>
+    <div class="score-badge">得分: <span id="score-display" style="color:var(--primary);">0</span></div>
+    <div class="score-badge">剩餘時間: <span id="timer-display" style="color:var(--accent);">45</span>s</div>
+  </div>
+
+  <!-- Game Field Container -->
+  <div id="game-container" class="game-container hidden">
+    <!-- 5 Scattered Hole Spots -->
+    <div class="mole-spot spot-0">
+      <div class="clipping-wrapper">
+        <div class="mole" id="mole-0">
+          <!-- FIX: Layered Wrapper added around sign assembly -->
+          <div class="mole-card-wrapper">
+            <div class="mole-card"><img src="" class="mole-img" id="img-0" alt=""></div>
+            <div class="mole-stick"></div>
+          </div>
+          <div class="mole-ear left"></div><div class="mole-ear right"></div>
+          <div class="mole-eyes-container"><div class="mole-eye"></div><div class="mole-eye"></div></div>
+          <div class="mole-snout"><div class="mole-nose"></div></div>
+        </div>
+      </div>
+      <div class="hole-mound"></div>
+      <div class="grass-tuft"></div>
+    </div>
+
+    <div class="mole-spot spot-1">
+      <div class="clipping-wrapper">
+        <div class="mole" id="mole-1">
+          <div class="mole-card-wrapper">
+            <div class="mole-card"><img src="" class="mole-img" id="img-1" alt=""></div>
+            <div class="mole-stick"></div>
+          </div>
+          <div class="mole-ear left"></div><div class="mole-ear right"></div>
+          <div class="mole-eyes-container"><div class="mole-eye"></div><div class="mole-eye"></div></div>
+          <div class="mole-snout"><div class="mole-nose"></div></div>
+        </div>
+      </div>
+      <div class="hole-mound"></div>
+      <div class="grass-tuft"></div>
+    </div>
+
+    <div class="mole-spot spot-2">
+      <div class="clipping-wrapper">
+        <div class="mole" id="mole-2">
+          <div class="mole-card-wrapper">
+            <div class="mole-card"><img src="" class="mole-img" id="img-2" alt=""></div>
+            <div class="mole-stick"></div>
+          </div>
+          <div class="mole-ear left"></div><div class="mole-ear right"></div>
+          <div class="mole-eyes-container"><div class="mole-eye"></div><div class="mole-eye"></div></div>
+          <div class="mole-snout"><div class="mole-nose"></div></div>
+        </div>
+      </div>
+      <div class="hole-mound"></div>
+      <div class="grass-tuft"></div>
+    </div>
+
+    <div class="mole-spot spot-3">
+      <div class="clipping-wrapper">
+        <div class="mole" id="mole-3">
+          <div class="mole-card-wrapper">
+            <div class="mole-card"><img src="" class="mole-img" id="img-3" alt=""></div>
+            <div class="mole-stick"></div>
+          </div>
+          <div class="mole-ear left"></div><div class="mole-ear right"></div>
+          <div class="mole-eyes-container"><div class="mole-eye"></div><div class="mole-eye"></div></div>
+          <div class="mole-snout"><div class="mole-nose"></div></div>
+        </div>
+      </div>
+      <div class="hole-mound"></div>
+      <div class="grass-tuft"></div>
+    </div>
+
+    <div class="mole-spot spot-4">
+      <div class="clipping-wrapper">
+        <div class="mole" id="mole-4">
+          <div class="mole-card-wrapper">
+            <div class="mole-card"><img src="" class="mole-img" id="img-4" alt=""></div>
+            <div class="mole-stick"></div>
+          </div>
+          <div class="mole-ear left"></div><div class="mole-ear right"></div>
+          <div class="mole-eyes-container"><div class="mole-eye"></div><div class="mole-eye"></div></div>
+          <div class="mole-snout"><div class="mole-nose"></div></div>
+        </div>
+      </div>
+      <div class="hole-mound"></div>
+      <div class="grass-tuft"></div>
+    </div>
+  </div>
+
+  <!-- Tracker Panel -->
+  <div id="tracker-panel" class="tracker-panel hidden">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #BBF7D0; padding-bottom:8px; margin-bottom:14px;">
+      <h2 style="margin:0; font-size:1.25rem; color:#2D6A4F;">紀錄面板 (Data Tracker)</h2>
+      <button id="export-img-btn" style="width:auto; padding:6px 14px; font-size:0.85rem; background:#276749;">📷 匯出紀錄圖片 (Export Image)</button>
+    </div>
+
+    <div style="margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+      <label for="child-name" style="margin: 0; white-space: nowrap;">學生/兒童名字 (Name):</label>
+      <input type="text" id="child-name" placeholder="請輸入名字..." style="padding: 6px 10px; width: 100%; border-radius: 6px; border: 1px solid #CCC;">
+    </div>
+
+    <div id="summary-box" style="background:white; padding:14px; border-radius:10px; font-weight:bold; font-size:0.95rem; border:1px dashed #38A169; line-height:1.6;">遊戲尚未完成</div>
+  </div>
+
+  <script>
+    // FULL VERIFIED STABLE DATABASE
+    const itemsDatabase = {
+      '個': [
+        { name: '蘋果', img: '[https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.png](https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.png)' },
+        { name: '橙', img: '[https://upload.wikimedia.org/wikipedia/commons/c/c4/Orange-Fruit-Pieces.png](https://upload.wikimedia.org/wikipedia/commons/c/c4/Orange-Fruit-Pieces.png)' },
+        { name: '蛋糕', img: '[https://upload.wikimedia.org/wikipedia/commons/d/d3/Strawberry_cake_icon.png](https://upload.wikimedia.org/wikipedia/commons/d/d3/Strawberry_cake_icon.png)' },
+        { name: '醫生', img: '[https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png](https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png)' },
+        { name: '波', img: '[https://upload.wikimedia.org/wikipedia/commons/d/d3/Soccerball.svg](https://upload.wikimedia.org/wikipedia/commons/d/d3/Soccerball.svg)' },
+        { name: '老師', img: '[https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png](https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png)' },
+        { name: '警察', img: '[https://upload.wikimedia.org/wikipedia/commons/a/ac/App_icon_police.png](https://upload.wikimedia.org/wikipedia/commons/a/ac/App_icon_police.png)' },
+        { name: '漢堡包', img: '[https://upload.wikimedia.org/wikipedia/commons/0/0b/RedDot_Burger.png](https://upload.wikimedia.org/wikipedia/commons/0/0b/RedDot_Burger.png)' }
+      ],
+      '條': [
+        { name: '魚', img: '[https://upload.wikimedia.org/wikipedia/commons/3/30/Fish_clipart.png](https://upload.wikimedia.org/wikipedia/commons/3/30/Fish_clipart.png)' },
+        { name: '香蕉', img: '[https://upload.wikimedia.org/wikipedia/commons/4/44/Plain_Banana.svg](https://upload.wikimedia.org/wikipedia/commons/4/44/Plain_Banana.svg)' },
+        { name: '褲', img: '[https://upload.wikimedia.org/wikipedia/commons/d/d2/Jeans_icon.png](https://upload.wikimedia.org/wikipedia/commons/d/d2/Jeans_icon.png)' },
+        { name: '毛巾', img: '[https://upload.wikimedia.org/wikipedia/commons/1/1b/Towel_icon.svg](https://upload.wikimedia.org/wikipedia/commons/1/1b/Towel_icon.svg)' },
+        { name: '頭髮', img: '[https://upload.wikimedia.org/wikipedia/commons/8/8d/Wig_icon.png](https://upload.wikimedia.org/wikipedia/commons/8/8d/Wig_icon.png)' },
+        { name: '裙', img: '[https://upload.wikimedia.org/wikipedia/commons/1/1a/Dress_icon.svg](https://upload.wikimedia.org/wikipedia/commons/1/1a/Dress_icon.svg)' },
+        { name: '蛇', img: '[https://upload.wikimedia.org/wikipedia/commons/2/29/Green_snake_icon.png](https://upload.wikimedia.org/wikipedia/commons/2/29/Green_snake_icon.png)' },
+        { name: '彩虹', img: '[https://upload.wikimedia.org/wikipedia/commons/3/31/Rainbow_icon.svg](https://upload.wikimedia.org/wikipedia/commons/3/31/Rainbow_icon.svg)' }
+      ],
+      '件': [
+        { name: '衫', img: '[https://upload.wikimedia.org/wikipedia/commons/a/a2/Shirt_icon.svg](https://upload.wikimedia.org/wikipedia/commons/a/a2/Shirt_icon.svg)' },
+        { name: '外套', img: '[https://upload.wikimedia.org/wikipedia/commons/1/1e/Jacket_icon.png](https://upload.wikimedia.org/wikipedia/commons/1/1e/Jacket_icon.png)' },
+        { name: '睡衣', img: '[https://upload.wikimedia.org/wikipedia/commons/d/d4/Pajamas_icon.svg](https://upload.wikimedia.org/wikipedia/commons/d/d4/Pajamas_icon.svg)' },
+        { name: '泳衣', img: '[https://upload.wikimedia.org/wikipedia/commons/2/26/Swimsuit_icon.svg](https://upload.wikimedia.org/wikipedia/commons/2/26/Swimsuit_icon.svg)' },
+        { name: '雨衣', img: '[https://upload.wikimedia.org/wikipedia/commons/7/73/Raincoat_icon.svg](https://upload.wikimedia.org/wikipedia/commons/7/73/Raincoat_icon.svg)' },
+        { name: '襯衫', img: '[https://upload.wikimedia.org/wikipedia/commons/b/b3/Dress_shirt_icon.png](https://upload.wikimedia.org/wikipedia/commons/b/b3/Dress_shirt_icon.png)' },
+        { name: '冷衫', img: '[https://upload.wikimedia.org/wikipedia/commons/5/5f/Sweater_icon.svg](https://upload.wikimedia.org/wikipedia/commons/5/5f/Sweater_icon.svg)' },
+        { name: ' WEST西裝', img: '[https://upload.wikimedia.org/wikipedia/commons/1/1b/Suit_icon.svg](https://upload.wikimedia.org/wikipedia/commons/1/1b/Suit_icon.svg)' }
+      ],
+      '隻': [
+        { name: '狗', img: '[https://upload.wikimedia.org/wikipedia/commons/2/26/Yellow_Happy_Dog.png](https://upload.wikimedia.org/wikipedia/commons/2/26/Yellow_Happy_Dog.png)' },
+        { name: '貓', img: '[https://upload.wikimedia.org/wikipedia/commons/1/1a/Cat_Vector_Icon.svg](https://upload.wikimedia.org/wikipedia/commons/1/1a/Cat_Vector_Icon.svg)' },
+        { name: '雀仔', img: '[https://upload.wikimedia.org/wikipedia/commons/e/e3/Bluebird_icon.png](https://upload.wikimedia.org/wikipedia/commons/e/e3/Bluebird_icon.png)' },
+        { name: '兔子', img: '[https://upload.wikimedia.org/wikipedia/commons/d/d1/Rabbit_icon.svg](https://upload.wikimedia.org/wikipedia/commons/d/d1/Rabbit_icon.svg)' },
+        { name: '大象', img: '[https://upload.wikimedia.org/wikipedia/commons/f/f6/Elephant_icon.svg](https://upload.wikimedia.org/wikipedia/commons/f/f6/Elephant_icon.svg)' },
+        { name: '獅子', img: '[https://upload.wikimedia.org/wikipedia/commons/7/73/Lion_head_icon.png](https://upload.wikimedia.org/wikipedia/commons/7/73/Lion_head_icon.png)' },
+        { name: '烏龜', img: '[https://upload.wikimedia.org/wikipedia/commons/3/3e/Turtle_icon.svg](https://upload.wikimedia.org/wikipedia/commons/3/3e/Turtle_icon.svg)' },
+        { name: '長頸鹿', img: '[https://upload.wikimedia.org/wikipedia/commons/c/c5/Giraffe_icon.svg](https://upload.wikimedia.org/wikipedia/commons/c/c5/Giraffe_icon.svg)' }
+      ],
+      '粒': [
+        { name: '糖', img: '[https://upload.wikimedia.org/wikipedia/commons/f/f2/Candy_Icon.svg](https://upload.wikimedia.org/wikipedia/commons/f/f2/Candy_Icon.svg)' },
+        { name: '提子', img: '[https://upload.wikimedia.org/wikipedia/commons/9/90/Grapes_icon.svg](https://upload.wikimedia.org/wikipedia/commons/9/90/Grapes_icon.svg)' },
+        { name: '草莓', img: '[https://upload.wikimedia.org/wikipedia/commons/e/e1/Strawberry_icon.png](https://upload.wikimedia.org/wikipedia/commons/e/e1/Strawberry_icon.png)' },
+        { name: '粟米', img: '[https://upload.wikimedia.org/wikipedia/commons/7/7a/Corn_icon.svg](https://upload.wikimedia.org/wikipedia/commons/7/7a/Corn_icon.svg)' },
+        { name: '芝士糖', img: '[https://upload.wikimedia.org/wikipedia/commons/2/20/Cheese_icon.svg](https://upload.wikimedia.org/wikipedia/commons/2/20/Cheese_icon.svg)' },
+        { name: '藥丸', img: '[https://upload.wikimedia.org/wikipedia/commons/a/a5/Pill_icon.svg](https://upload.wikimedia.org/wikipedia/commons/a/a5/Pill_icon.svg)' },
+        { name: '寶石', img: '[https://upload.wikimedia.org/wikipedia/commons/2/2c/Gemstone_icon.svg](https://upload.wikimedia.org/wikipedia/commons/2/2c/Gemstone_icon.svg)' },
+        { name: '車厘子', img: '[https://upload.wikimedia.org/wikipedia/commons/f/f6/Cherry_icon.png](https://upload.wikimedia.org/wikipedia/commons/f/f6/Cherry_icon.png)' }
+      ],
+      '架': [
+        { name: '車', img: '[https://upload.wikimedia.org/wikipedia/commons/7/71/Red_Car_Icon.png](https://upload.wikimedia.org/wikipedia/commons/7/71/Red_Car_Icon.png)' },
+        { name: '飛機', img: '[https://upload.wikimedia.org/wikipedia/commons/f/f0/Airplane_icon.svg](https://upload.wikimedia.org/wikipedia/commons/f/f0/Airplane_icon.svg)' },
+        { name: '單車', img: '[https://upload.wikimedia.org/wikipedia/commons/e/eb/Bicycle_icon.svg](https://upload.wikimedia.org/wikipedia/commons/e/eb/Bicycle_icon.svg)' },
+        { name: '巴士', img: '[https://upload.wikimedia.org/wikipedia/commons/c/c6/Bus_icon.svg](https://upload.wikimedia.org/wikipedia/commons/c/c6/Bus_icon.svg)' },
+        { name: '列車', img: '[https://upload.wikimedia.org/wikipedia/commons/a/a4/Train_icon.svg](https://upload.wikimedia.org/wikipedia/commons/a/a4/Train_icon.svg)' },
+        { name: '直升機', img: '[https://upload.wikimedia.org/wikipedia/commons/a/a9/Helicopter_icon.svg](https://upload.wikimedia.org/wikipedia/commons/a/a9/Helicopter_icon.svg)' },
+        { name: '消防車', img: '[https://upload.wikimedia.org/wikipedia/commons/e/e7/Fire_truck_icon.png](https://upload.wikimedia.org/wikipedia/commons/e/e7/Fire_truck_icon.png)' },
+        { name: '警車', img: '[https://upload.wikimedia.org/wikipedia/commons/3/3d/Police_car_icon.png](https://upload.wikimedia.org/wikipedia/commons/3/3d/Police_car_icon.png)' }
+      ],
+      '張': [
+        { name: '紙巾', img: '[https://upload.wikimedia.org/wikipedia/commons/6/64/Tissue_box_icon.png](https://upload.wikimedia.org/wikipedia/commons/6/64/Tissue_box_icon.png)' },
+        { name: '櫈', img: '[https://upload.wikimedia.org/wikipedia/commons/a/a4/Chair_icon.svg](https://upload.wikimedia.org/wikipedia/commons/a/a4/Chair_icon.svg)' },
+        { name: '床', img: '[https://upload.wikimedia.org/wikipedia/commons/e/e9/Bed_icon.svg](https://upload.wikimedia.org/wikipedia/commons/e/e9/Bed_icon.svg)' },
+        { name: '枱', img: '[https://upload.wikimedia.org/wikipedia/commons/6/6b/Table_icon.svg](https://upload.wikimedia.org/wikipedia/commons/6/6b/Table_icon.svg)' },
+        { name: '相片', img: '[https://upload.wikimedia.org/wikipedia/commons/1/1d/Photo_frame_icon.svg](https://upload.wikimedia.org/wikipedia/commons/1/1d/Photo_frame_icon.svg)' },
+        { name: '八達通', img: '[https://upload.wikimedia.org/wikipedia/commons/e/e2/Credit_card_icon.svg](https://upload.wikimedia.org/wikipedia/commons/e/e2/Credit_card_icon.svg)' },
+        { name: '貼紙', img: '[https://upload.wikimedia.org/wikipedia/commons/d/d0/Sticker_icon.svg](https://upload.wikimedia.org/wikipedia/commons/d/d0/Sticker_icon.svg)' },
+        { name: '梳化', img: '[https://upload.wikimedia.org/wikipedia/commons/1/15/Sofa_icon.svg](https://upload.wikimedia.org/wikipedia/commons/1/15/Sofa_icon.svg)' }
+      ],
+      '塊': [
+        { name: '餅乾', img: '[https://upload.wikimedia.org/wikipedia/commons/f/f1/Cookie_icon.svg](https://upload.wikimedia.org/wikipedia/commons/f/f1/Cookie_icon.svg)' },
+        { name: '曲奇', img: '[https://upload.wikimedia.org/wikipedia/commons/d/d4/Chocolate_chip_cookie.png](https://upload.wikimedia.org/wikipedia/commons/d/d4/Chocolate_chip_cookie.png)' },
+        { name: '鏡子', img: '[https://upload.wikimedia.org/wikipedia/commons/3/30/Mirror_icon.svg](https://upload.wikimedia.org/wikipedia/commons/3/30/Mirror_icon.svg)' },
+        { name: '披薩', img: '[https://upload.wikimedia.org/wikipedia/commons/a/a3/Pizza_slice_icon.png](https://upload.wikimedia.org/wikipedia/commons/a/a3/Pizza_slice_icon.png)' },
+        { name: '麵包', img: '[https://upload.wikimedia.org/wikipedia/commons/7/70/Toast_bread_icon.png](https://upload.wikimedia.org/wikipedia/commons/7/70/Toast_bread_icon.png)' },
+        { name: '芝士', img: '[https://upload.wikimedia.org/wikipedia/commons/a/a8/Cheese_wedge_icon.png](https://upload.wikimedia.org/wikipedia/commons/a/a8/Cheese_wedge_icon.png)' },
+        { name: '番茄', img: '[https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_icon.svg](https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_icon.svg)' },
+        { name: '拼圖', img: '[https://upload.wikimedia.org/wikipedia/commons/8/8a/Puzzle_piece_icon.svg](https://upload.wikimedia.org/wikipedia/commons/8/8a/Puzzle_piece_icon.svg)' }
+      ]
+    };
+
+    let targetClassifier = '個';
+    let score = 0;
+    let timeLeft = 45;
+    let timerInterval = null;
+    let moleSequence = [];
+    let currentMoleIndex = 0;
+    let activeMoleTimeout = null;
+    let targetWhacks = 0;
+    let distractorWhacks = 0;
+    let totalTargetsSpawned = 0;
+
+    const setupPanel = document.getElementById('setup-panel');
+    const gameContainer = document.getElementById('game-container');
+    const gameControls = document.getElementById('game-controls');
+    const trackerPanel = document.getElementById('tracker-panel');
+    const summaryBox = document.getElementById('summary-box');
+    const targetDisplay = document.getElementById('target-display');
+    const scoreDisplay = document.getElementById('score-display');
+    const timerDisplay = document.getElementById('timer-display');
+    const startBtn = document.getElementById('start-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const exportImgBtn = document.getElementById('export-img-btn');
+    const childNameInput = document.getElementById('child-name');
+
+    const radioBtns = document.querySelectorAll('.radio-btn');
+    radioBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        radioBtns.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        btn.querySelector('input').checked = true;
+      });
+    });
+
+    startBtn.addEventListener('click', startGame);
+    resetBtn.addEventListener('click', stopGameAndReset);
+    exportImgBtn.addEventListener('click', exportTrackerAsImage);
+
+    function startGame() {
+      const selectedRadio = document.querySelector('input[name="classifier"]:checked');
+      targetClassifier = selectedRadio ? selectedRadio.value : '個';
+
+      score = 0;
+      timeLeft = 45;
+      targetWhacks = 0;
+      distractorWhacks = 0;
+      totalTargetsSpawned = 0;
+      currentMoleIndex = 0;
+
+      targetDisplay.textContent = targetClassifier;
+      scoreDisplay.textContent = '0';
+      timerDisplay.textContent = '45';
+
+      moleSequence = generateMolePool(targetClassifier);
+
+      setupPanel.classList.add('hidden');
+      gameControls.classList.remove('hidden');
+      gameContainer.classList.remove('hidden');
+      trackerPanel.classList.add('hidden');
+
+      for (let i = 0; i < 5; i++) {
+        const moleElem = document.getElementById(`mole-${i}`);
+        moleElem.onclick = (e) => whackMole(i, e);
+      }
+
+      startTimer();
+      spawnNextMole();
+    }
+
+    function generateMolePool(targetCls) {
+      const pool = [];
+
+      const targetItems = shuffle([...itemsDatabase[targetCls]]);
+      const selectedTargets = targetItems.slice(0, 5);
+      selectedTargets.forEach(item => pool.push({ ...item, isTarget: true }));
+
+      const distractorItems = [];
+      Object.keys(itemsDatabase).forEach(cls => {
+        if (cls !== targetCls) {
+          distractorItems.push(...itemsDatabase[cls]);
+        }
+      });
+
+      const shuffledDistractors = shuffle([...distractorItems]);
+      const selectedDistractors = shuffledDistractors.slice(0, 5);
+      selectedDistractors.forEach(item => pool.push({ ...item, isTarget: false }));
+
+      return shuffle(pool);
+    }
+
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function spawnNextMole() {
+      if (currentMoleIndex >= moleSequence.length || timeLeft <= 0) {
+        endGame();
+        return;
+      }
+
+      const moleData = moleSequence[currentMoleIndex];
+      const randomSpotIdx = Math.floor(Math.random() * 5);
+
+      const moleElem = document.getElementById(`mole-${randomSpotIdx}`);
+      const imgElem = document.getElementById(`img-${randomSpotIdx}`);
+
+      imgElem.src = moleData.img;
+      moleElem.dataset.isTarget = moleData.isTarget;
+      moleElem.dataset.whacked = 'false';
+
+      if (moleData.isTarget) totalTargetsSpawned++;
+
+      setTimeout(() => {
+        moleElem.classList.add('up');
+      }, 50);
+
+      activeMoleTimeout = setTimeout(() => {
+        moleElem.classList.remove('up');
+        currentMoleIndex++;
+        setTimeout(spawnNextMole, 800);
+      }, 3200);
+    }
+
+    function whackMole(spotIdx, event) {
+      const moleElem = document.getElementById(`mole-${spotIdx}`);
+      if (!moleElem.classList.contains('up') || moleElem.dataset.whacked === 'true') return;
+
+      moleElem.dataset.whacked = 'true';
+      clearTimeout(activeMoleTimeout);
+
+      const isTarget = moleElem.dataset.isTarget === 'true';
+
+      showHitFX(spotIdx, isTarget ? '+1' : '✗', isTarget ? 'correct' : 'wrong');
+
+      if (isTarget) {
+        score++;
+        targetWhacks++;
+        scoreDisplay.textContent = score;
+      } else {
+        distractorWhacks++;
+      }
+
+      moleElem.classList.remove('up');
+      currentMoleIndex++;
+
+      setTimeout(spawnNextMole, 600);
+    }
+
+    function showHitFX(spotIdx, text, type) {
+      const spotWrapper = document.querySelectorAll('.mole-spot')[spotIdx];
+      const fx = document.createElement('div');
+      fx.className = `hit-fx ${type}`;
+      fx.textContent = text;
+      spotWrapper.appendChild(fx);
+
+      setTimeout(() => fx.remove(), 600);
+    }
+
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function stopGameAndReset() {
+      clearInterval(timerInterval);
+      clearTimeout(activeMoleTimeout);
+
+      for (let i = 0; i < 5; i++) {
+        document.getElementById(`mole-${i}`).classList.remove('up');
+      }
+
+      gameContainer.classList.add('hidden');
+      gameControls.classList.add('hidden');
+      trackerPanel.classList.add('hidden');
+      setupPanel.classList.remove('hidden');
+    }
+
+    function endGame() {
+      clearInterval(timerInterval);
+      clearTimeout(activeMoleTimeout);
+
+      for (let i = 0; i < 5; i++) {
+        document.getElementById(`mole-${i}`).classList.remove('up');
+      }
+
+      const totalWhacks = targetWhacks + distractorWhacks;
+      const accuracy = totalWhacks > 0 ? Math.round((targetWhacks / totalWhacks) * 100) : 0;
+      const targetHitRate = totalTargetsSpawned > 0 ? Math.round((targetWhacks / totalTargetsSpawned) * 100) : 0;
+
+      summaryBox.innerHTML = `
+        <div>🎯 <b>目標量詞 (Target Classifier):</b> 一${targetClassifier}...</div>
+        <div>得分 (Score): ${score} / 5</div>
+        <div>正確打中目標 (Target Hits): ${targetWhacks} / ${totalTargetsSpawned} (${targetHitRate}%)</div>
+        <div>誤打干擾項 (Distractor Hits): ${distractorWhacks}</div>
+        <div>整體打中正確率 (Accuracy): ${accuracy}%</div>
+      `;
+
+      trackerPanel.classList.remove('hidden');
+    }
+
+    function exportTrackerAsImage() {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      const nameVal = childNameInput.value.trim() || '未填寫 (N/A)';
+      const width = 500;
+      const height = 300;
+
+      canvas.width = width;
+      canvas.height = height;
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.strokeStyle = '#276749';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(10, 10, width - 20, height - 20);
+
+      ctx.fillStyle = '#276749';
+      ctx.font = 'bold 20px "PingFang HK", "Microsoft JhengHei", sans-serif';
+      ctx.fillText('打地鼠量詞識別 - 紀錄面板', 30, 45);
+
+      const today = new Date().toLocaleDateString('zh-HK');
+      ctx.fillStyle = '#2D3748';
+      ctx.font = 'bold 15px sans-serif';
+      ctx.fillText(`學生名字 (Name): ${nameVal}`, 30, 75);
+
+      ctx.fillStyle = '#718096';
+      ctx.font = '14px sans-serif';
+      ctx.fillText(`日期 Date: ${today}`, 30, 98);
+
+      ctx.strokeStyle = '#BBF7D0';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(30, 110);
+      ctx.lineTo(width - 30, 110);
+      ctx.stroke();
+
+      ctx.fillStyle = '#2D3748';
+      ctx.font = '15px sans-serif';
+      ctx.fillText(`目標量詞 (Target Classifier): 一${targetClassifier}...`, 30, 140);
+      ctx.fillText(`得分 (Score): ${score} / 5`, 30, 170);
+      ctx.fillText(`正確打中目標 (Target Hits): ${targetWhacks} / ${totalTargetsSpawned}`, 30, 200);
+      ctx.fillText(`誤打干擾項 (Distractor Mis-hits): ${distractorWhacks}`, 30, 230);
+
+      const totalWhacks = targetWhacks + distractorWhacks;
+      const accuracy = totalWhacks > 0 ? Math.round((targetWhacks / totalWhacks) * 100) : 0;
+      ctx.fillStyle = '#276749';
+      ctx.font = 'bold 16px sans-serif';
+      ctx.fillText(`整體正確率 (Accuracy): ${accuracy}%`, 30, 265);
+
+      const link = document.createElement('a');
+      const safeName = nameVal.replace(/[/\\?%*:|"<>]/g, '');
+      link.download = `打地鼠量詞紀錄_${safeName}_${today.replace(/\//g, '-')}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+  </script>
+</body>
+</html>
