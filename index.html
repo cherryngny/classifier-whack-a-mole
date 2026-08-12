@@ -724,8 +724,8 @@
       ]
     };
 
-    // Constant: Exact 3 seconds stay time for all moles
-    const MOLE_POPUP_DURATION = 3000; 
+    // Constant: Exact 5 seconds (5000ms) stay time for all moles
+    const MOLE_POPUP_DURATION = 5000; 
 
     // State Variables
     let targetClassifier = '個';
@@ -856,7 +856,7 @@
 
         moleEl.classList.add('up');
 
-        // Each mole gets a strict 3000ms timer
+        // Each mole gets a strict 5000ms timer
         moleTimeoutIds[index] = setTimeout(() => {
           if (moleEl.classList.contains('up')) {
             moleEl.classList.remove('up');
@@ -880,7 +880,7 @@
       const moleEl = document.getElementById(`mole-${index}`);
       if (!moleEl.classList.contains('up')) return;
 
-      // Clear the 3-second auto-retract timer since player whacked it
+      // Clear the 5-second auto-retract timer since player whacked it
       if (moleTimeoutIds[index]) {
         clearTimeout(moleTimeoutIds[index]);
         delete moleTimeoutIds[index];
