@@ -58,6 +58,12 @@
       gap: 10px;
     }
 
+    .level-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
     .radio-btn {
       display: flex;
       align-items: center;
@@ -67,10 +73,11 @@
       border: 2px solid #BBF7D0;
       border-radius: 10px;
       cursor: pointer;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: bold;
       color: #276749;
       transition: all 0.2s ease;
+      text-align: center;
     }
 
     .radio-btn input { display: none; }
@@ -507,6 +514,21 @@
       </div>
     </div>
 
+    <div class="form-group">
+      <label>2. 選擇遊戲難易度 (Difficulty Level)：</label>
+      <div class="level-group" id="level-options">
+        <label class="radio-btn level-btn selected">
+          <input type="radio" name="level" value="1" checked> Level 1<br>(7.5s 停留)
+        </label>
+        <label class="radio-btn level-btn">
+          <input type="radio" name="level" value="2"> Level 2<br>(5.0s 停留)
+        </label>
+        <label class="radio-btn level-btn">
+          <input type="radio" name="level" value="3"> Level 3<br>(2.5s 停留)
+        </label>
+      </div>
+    </div>
+
     <button id="start-btn">開始遊戲 Start Game</button>
   </div>
 
@@ -724,9 +746,18 @@
       ]
     };
 
-    // Constant 5000ms Stay Time
-    const MOLE_STAY_DURATION = 5000;
+    // Constant Animation Time
     const MOLE_ANIMATION_TIME = 300;
+
+    // Level-based Stay Durations
+    const LEVEL_DURATIONS = {
+      1: 7500, // Level 1: 7.5s
+      2: 5000, // Level 2: 5.0s
+      3: 2500  // Level 3: 2.5s
+    };
+
+    let selectedLevel = 1;
+    let moleStayDuration = 7500;
 
     let targetClassifier = '個';
     let score = 0;
@@ -774,11 +805,21 @@
     // Call preload immediately on script load
     preloadAllDatabaseImages();
 
-    // Setup Custom Radio Selection
-    const radioBtns = document.querySelectorAll('.radio-btn');
+    // Setup Custom Radio Selection for Classifier Options
+    const radioBtns = document.querySelectorAll('#classifier-options .radio-btn');
     radioBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         radioBtns.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        btn.querySelector('input').checked = true;
+      });
+    });
+
+    // Setup Custom Radio Selection for Difficulty Level Options
+    const levelBtns = document.querySelectorAll('#level-options .radio-btn');
+    levelBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        levelBtns.forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
         btn.querySelector('input').checked = true;
       });
@@ -792,6 +833,12 @@
       const selectedRadio = document.querySelector('input[name="classifier"]:checked');
       if (!selectedRadio) return;
       targetClassifier = selectedRadio.value;
+
+      const selectedLevelRadio = document.querySelector('input[name="level"]:checked');
+      if (selectedLevelRadio) {
+        selectedLevel = parseInt(selectedLevelRadio.value);
+        moleStayDuration = LEVEL_DURATIONS[selectedLevel] || 7500;
+      }
 
       score = 0;
       timeLeft = 30;
@@ -862,7 +909,7 @@
         }
       }
 
-      // STRICT CONCURRENT CAP: Maximum 2 or 3 moles allowed simultaneously
+      // STRICT CONCURRENT CAP: Maximum 2 or 3 moles allowed simultaneously across all levels
       const maxAllowedMoles = Math.random() < 0.5 ? 2 : 3;
 
       if (activeMoleCount < maxAllowedMoles) {
@@ -911,15 +958,15 @@
           chosenMole.classList.add('up');
           moleState[randomIndex] = 'STAYING';
 
-          // STRICT 5000ms STAY TIMER
+          // STRICT STAY TIMER BASED ON SELECTED DIFFICULTY LEVEL
           moleStayTimeoutIds[randomIndex] = setTimeout(() => {
             retractMole(randomIndex);
-          }, MOLE_STAY_DURATION);
+          }, moleStayDuration);
         }
       }
 
       // Schedule next spawn attempt interval
-      const delay = Math.floor(Math.random() * 400) + 800;
+      const delay = Math.floor(Math.random() * 400) + 600;
       moleTimer = setTimeout(popUpLoop, delay);
     }
 
@@ -946,7 +993,7 @@
 
       mole.dataset.whacked = "true";
       
-      // Clear auto-retract 5s timer because player whacked it
+      // Clear auto-retract stay timer because player whacked it
       if (moleStayTimeoutIds[index]) {
         clearTimeout(moleStayTimeoutIds[index]);
         delete moleStayTimeoutIds[index];
@@ -1024,12 +1071,14 @@
 
       const totalClicks = totalCorrect + totalWrong;
       const accuracy = totalClicks > 0 ? Math.round((totalCorrect / totalClicks) * 100) : 0;
+      const levelSecs = (moleStayDuration / 1000).toFixed(1);
 
       summaryBox.innerHTML = `
         <div style="font-size: 1.1rem; margin-bottom: 8px; color: #276749;">
           🎯 <b>${childName}</b> 的打地鼠遊戲結果：
         </div>
         <div><b>目標量詞：</b>「${targetClassifier}」</div>
+        <div><b>難易度：</b>Level ${selectedLevel} (每地鼠停留 ${levelSecs} 秒)</div>
         <div><b>最終得分：</b>${score} 分</div>
         <div><b>整體準確度：</b>${totalCorrect} / ${totalClicks} (${accuracy}%)</div>
         ${itemsHTML ? `<hr style="border:0; border-top:1px dashed #CCC; margin:10px 0;"><ul style="padding-left:20px; margin:0;">${itemsHTML}</ul>` : ''}
