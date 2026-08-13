@@ -735,10 +735,12 @@
     let moleTimer = null;
     let isPlaying = false;
     
-    // Finite state machine for each mole to eliminate race conditions completely
-    // Possible states: 'DOWN', 'GOING_UP', 'STAYING', 'RETRACTING'
+    // Finite state machine for each mole
     let moleState = ['DOWN', 'DOWN', 'DOWN', 'DOWN', 'DOWN'];
     let moleStayTimeoutIds = {}; 
+
+    // Global Image Preload Storage
+    let preloadedImages = {};
 
     // Track performance stats
     let trackedData = {};
@@ -755,6 +757,22 @@
     const startBtn = document.getElementById('start-btn');
     const resetBtn = document.getElementById('reset-btn');
     const exportImgBtn = document.getElementById('export-img-btn');
+
+    // Preload ALL images upfront to ensure zero image rendering delays or mid-air swaps
+    function preloadAllDatabaseImages() {
+      Object.keys(itemsDatabase).forEach(category => {
+        itemsDatabase[category].forEach(item => {
+          if (!preloadedImages[item.img]) {
+            const img = new Image();
+            img.src = item.img;
+            preloadedImages[item.img] = img;
+          }
+        });
+      });
+    }
+
+    // Call preload immediately on script load
+    preloadAllDatabaseImages();
 
     // Setup Custom Radio Selection
     const radioBtns = document.querySelectorAll('.radio-btn');
@@ -836,7 +854,7 @@
     function popUpLoop() {
       if (!isPlaying) return;
 
-      // COUNT CURRENTLY ACTIVE MOLES (Up, Going Up, or Staying)
+      // COUNT CURRENTLY ACTIVE MOLES (Going Up or Staying)
       let activeMoleCount = 0;
       for (let i = 0; i < 5; i++) {
         if (moleState[i] === 'GOING_UP' || moleState[i] === 'STAYING') {
@@ -844,8 +862,7 @@
         }
       }
 
-      // STRICT CAP: Only spawn if currently visible moles are LESS THAN 2 or 3
-      // Randomly picks max cap of 2 or 3 for dynamic gameplay
+      // STRICT CONCURRENT CAP: Maximum 2 or 3 moles allowed simultaneously
       const maxAllowedMoles = Math.random() < 0.5 ? 2 : 3;
 
       if (activeMoleCount < maxAllowedMoles) {
@@ -863,7 +880,7 @@
           const chosenMole = document.getElementById(`mole-${randomIndex}`);
           const moleImg = document.getElementById(`img-${randomIndex}`);
 
-          // LOCK IMMEDIATELY to prevent race conditions
+          // LOCK IMMEDIATELY
           moleState[randomIndex] = 'GOING_UP';
 
           // Decide if showing target item (~50% chance) or distractor
@@ -878,7 +895,7 @@
           const pool = itemsDatabase[selectedClassifier];
           const selectedItem = pool[Math.floor(Math.random() * pool.length)];
 
-          // Assign content BEFORE bringing it up
+          // Assign preloaded image source and dataset BEFORE sliding up
           chosenMole.dataset.classifier = selectedClassifier;
           chosenMole.dataset.itemName = selectedItem.name;
           chosenMole.dataset.whacked = "false";
