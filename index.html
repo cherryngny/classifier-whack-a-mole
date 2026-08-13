@@ -726,6 +726,8 @@
 
     // Strict stay time for active moles (5000ms)
     const MOLE_STAY_DURATION = 5000;
+    // CSS slide animation time (300ms)
+    const MOLE_ANIMATION_TIME = 300;
 
     let targetClassifier = '個';
     let score = 0;
@@ -733,6 +735,9 @@
     let gameTimer = null;
     let moleTimer = null;
     let isPlaying = false;
+    
+    // Explicit state tracking to lock holes from re-selection until fully hidden
+    let isMoleBusy = [false, false, false, false, false];
     let moleStayTimeoutIds = {}; 
 
     // Track performance stats: { itemName: { correctClicks: 0, wrongClicks: 0, targetClassifier: string, itemClassifier: string } }
@@ -789,6 +794,7 @@
         const mole = document.getElementById(`mole-${i}`);
         mole.classList.remove('up');
         mole.onclick = () => whackMole(i);
+        isMoleBusy[i] = false;
         if (moleStayTimeoutIds[i]) {
           clearTimeout(moleStayTimeoutIds[i]);
           delete moleStayTimeoutIds[i];
@@ -807,6 +813,7 @@
       for (let i = 0; i < 5; i++) {
         const mole = document.getElementById(`mole-${i}`);
         mole.classList.remove('up');
+        isMoleBusy[i] = false;
         if (moleStayTimeoutIds[i]) {
           clearTimeout(moleStayTimeoutIds[i]);
           delete moleStayTimeoutIds[i];
@@ -829,20 +836,22 @@
     function popUpLoop() {
       if (!isPlaying) return;
 
-      // STRICT FIX FOR IMAGE SWAPPING: Find only holes that are strictly DOWN (hidden)
+      // Find holes that are strictly free and NOT busy (completely down)
       const availableIndices = [];
       for (let i = 0; i < 5; i++) {
-        const mole = document.getElementById(`mole-${i}`);
-        if (!mole.classList.contains('up')) {
+        if (!isMoleBusy[i]) {
           availableIndices.push(i);
         }
       }
 
-      // Pop up an idle mole if one exists
+      // Pop up an available mole if one exists
       if (availableIndices.length > 0) {
         const randomIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
         const chosenMole = document.getElementById(`mole-${randomIndex}`);
         const moleImg = document.getElementById(`img-${randomIndex}`);
+
+        // Lock this hole immediately
+        isMoleBusy[randomIndex] = true;
 
         // Decide if showing target item (~50% chance) or distractor
         const isTarget = Math.random() < 0.5;
@@ -856,7 +865,7 @@
         const pool = itemsDatabase[selectedClassifier];
         const selectedItem = pool[Math.floor(Math.random() * pool.length)];
 
-        // Set data and image ONLY when the mole pops up
+        // Set data and image BEFORE popping up
         chosenMole.dataset.classifier = selectedClassifier;
         chosenMole.dataset.itemName = selectedItem.name;
         chosenMole.dataset.whacked = "false";
@@ -870,18 +879,25 @@
 
         chosenMole.classList.add('up');
 
-        // STRICT 5000ms STAY TIMER: Mole stays frozen up for 5000ms unless clicked
+        // STRICT 5000ms STAY TIMER
         moleStayTimeoutIds[randomIndex] = setTimeout(() => {
-          if (chosenMole.classList.contains('up')) {
-            chosenMole.classList.remove('up');
-          }
-          delete moleStayTimeoutIds[randomIndex];
+          retractMole(randomIndex);
         }, MOLE_STAY_DURATION);
       }
 
       // Schedule next spawn attempt interval
-      const delay = Math.floor(Math.random() * 500) + 800;
+      const delay = Math.floor(Math.random() * 400) + 700;
       moleTimer = setTimeout(popUpLoop, delay);
+    }
+
+    function retractMole(index) {
+      const mole = document.getElementById(`mole-${index}`);
+      mole.classList.remove('up');
+
+      // Keep hole locked for 300ms so CSS animation finishes sliding into the ground
+      setTimeout(() => {
+        isMoleBusy[index] = false;
+      }, MOLE_ANIMATION_TIME);
     }
 
     function whackMole(index) {
@@ -916,7 +932,7 @@
         if (trackedData[fullItemName]) trackedData[fullItemName].wrongClicks++;
       }
 
-      mole.classList.remove('up');
+      retractMole(index);
     }
 
     function showFX(parent, text, type) {
@@ -938,6 +954,7 @@
           delete moleStayTimeoutIds[i];
         }
         document.getElementById(`mole-${i}`).classList.remove('up');
+        isMoleBusy[i] = false;
       }
 
       gameContainer.classList.add('hidden');
