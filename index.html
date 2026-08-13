@@ -724,9 +724,8 @@
       ]
     };
 
-    // Strict stay time for active moles (5000ms)
+    // Constant 5000ms Stay Time
     const MOLE_STAY_DURATION = 5000;
-    // CSS slide animation time (300ms)
     const MOLE_ANIMATION_TIME = 300;
 
     let targetClassifier = '個';
@@ -736,11 +735,12 @@
     let moleTimer = null;
     let isPlaying = false;
     
-    // Explicit state tracking to lock holes from re-selection until fully hidden
-    let isMoleBusy = [false, false, false, false, false];
+    // Finite state machine for each mole to completely eliminate race conditions
+    // Possible states: 'DOWN', 'GOING_UP', 'STAYING', 'RETRACTING'
+    let moleState = ['DOWN', 'DOWN', 'DOWN', 'DOWN', 'DOWN'];
     let moleStayTimeoutIds = {}; 
 
-    // Track performance stats: { itemName: { correctClicks: 0, wrongClicks: 0, targetClassifier: string, itemClassifier: string } }
+    // Track performance stats
     let trackedData = {};
 
     const setupPanel = document.getElementById('setup-panel');
@@ -794,7 +794,7 @@
         const mole = document.getElementById(`mole-${i}`);
         mole.classList.remove('up');
         mole.onclick = () => whackMole(i);
-        isMoleBusy[i] = false;
+        moleState[i] = 'DOWN';
         if (moleStayTimeoutIds[i]) {
           clearTimeout(moleStayTimeoutIds[i]);
           delete moleStayTimeoutIds[i];
@@ -813,7 +813,7 @@
       for (let i = 0; i < 5; i++) {
         const mole = document.getElementById(`mole-${i}`);
         mole.classList.remove('up');
-        isMoleBusy[i] = false;
+        moleState[i] = 'DOWN';
         if (moleStayTimeoutIds[i]) {
           clearTimeout(moleStayTimeoutIds[i]);
           delete moleStayTimeoutIds[i];
@@ -836,10 +836,10 @@
     function popUpLoop() {
       if (!isPlaying) return;
 
-      // Find holes that are strictly free and NOT busy (completely down)
+      // Find indices that are STRICTLY 'DOWN'
       const availableIndices = [];
       for (let i = 0; i < 5; i++) {
-        if (!isMoleBusy[i]) {
+        if (moleState[i] === 'DOWN') {
           availableIndices.push(i);
         }
       }
@@ -850,8 +850,8 @@
         const chosenMole = document.getElementById(`mole-${randomIndex}`);
         const moleImg = document.getElementById(`img-${randomIndex}`);
 
-        // Lock this hole immediately
-        isMoleBusy[randomIndex] = true;
+        // LOCK IMMEDIATELY to prevent race conditions
+        moleState[randomIndex] = 'GOING_UP';
 
         // Decide if showing target item (~50% chance) or distractor
         const isTarget = Math.random() < 0.5;
@@ -865,7 +865,7 @@
         const pool = itemsDatabase[selectedClassifier];
         const selectedItem = pool[Math.floor(Math.random() * pool.length)];
 
-        // Set data and image BEFORE popping up
+        // Assign content BEFORE bringing it up
         chosenMole.dataset.classifier = selectedClassifier;
         chosenMole.dataset.itemName = selectedItem.name;
         chosenMole.dataset.whacked = "false";
@@ -877,7 +877,9 @@
           trackedData[fullItemName] = { correctClicks: 0, wrongClicks: 0, targetClassifier: targetClassifier, itemClassifier: selectedClassifier };
         }
 
+        // Animate up
         chosenMole.classList.add('up');
+        moleState[randomIndex] = 'STAYING';
 
         // STRICT 5000ms STAY TIMER
         moleStayTimeoutIds[randomIndex] = setTimeout(() => {
@@ -891,12 +893,15 @@
     }
 
     function retractMole(index) {
+      if (moleState[index] === 'RETRACTING' || moleState[index] === 'DOWN') return;
+
+      moleState[index] = 'RETRACTING';
       const mole = document.getElementById(`mole-${index}`);
       mole.classList.remove('up');
 
-      // Keep hole locked for 300ms so CSS animation finishes sliding into the ground
+      // Keep hole locked until CSS animation finishes sliding into the ground
       setTimeout(() => {
-        isMoleBusy[index] = false;
+        moleState[index] = 'DOWN';
       }, MOLE_ANIMATION_TIME);
     }
 
@@ -904,7 +909,9 @@
       if (!isPlaying) return;
 
       const mole = document.getElementById(`mole-${index}`);
-      if (!mole.classList.contains('up') || mole.dataset.whacked === "true") return;
+      
+      // ONLY ALLOW CLICK IF IT IS VISIBLE AND HAS NOT BEEN CLICKED
+      if (moleState[index] !== 'STAYING' || mole.dataset.whacked === "true") return;
 
       mole.dataset.whacked = "true";
       
@@ -954,7 +961,7 @@
           delete moleStayTimeoutIds[i];
         }
         document.getElementById(`mole-${i}`).classList.remove('up');
-        isMoleBusy[i] = false;
+        moleState[i] = 'DOWN';
       }
 
       gameContainer.classList.add('hidden');
