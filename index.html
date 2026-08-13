@@ -438,7 +438,7 @@
       border: 1px solid #D4A373;
     }
 
-    /* Whack FX (+1 / ✗) */
+    /* Whack FX (+10 / ✗) */
     .hit-fx {
       position: absolute;
       top: 0px;
@@ -724,14 +724,18 @@
       ]
     };
 
+    // Strict stay time for active moles
+    const MOLE_STAY_DURATION = 5000;
+
     let targetClassifier = '個';
     let score = 0;
     let timeLeft = 30;
     let gameTimer = null;
     let moleTimer = null;
     let isPlaying = false;
+    let moleStayTimeoutIds = {}; 
 
-    // Track performance stats: { itemName: { correctClicks: 0, wrongClicks: 0, classifier: string } }
+    // Track performance stats: { itemName: { correctClicks: 0, wrongClicks: 0, targetClassifier: string, itemClassifier: string } }
     let trackedData = {};
 
     const setupPanel = document.getElementById('setup-panel');
@@ -780,10 +784,15 @@
       gameControls.classList.remove('hidden');
       gameContainer.classList.remove('hidden');
 
-      // Bind mole click events
+      // Bind mole click events and clean state
       for (let i = 0; i < 5; i++) {
         const mole = document.getElementById(`mole-${i}`);
+        mole.classList.remove('up');
         mole.onclick = () => whackMole(i);
+        if (moleStayTimeoutIds[i]) {
+          clearTimeout(moleStayTimeoutIds[i]);
+          delete moleStayTimeoutIds[i];
+        }
       }
 
       gameTimer = setInterval(updateTimer, 1000);
@@ -798,6 +807,10 @@
       for (let i = 0; i < 5; i++) {
         const mole = document.getElementById(`mole-${i}`);
         mole.classList.remove('up');
+        if (moleStayTimeoutIds[i]) {
+          clearTimeout(moleStayTimeoutIds[i]);
+          delete moleStayTimeoutIds[i];
+        }
       }
 
       gameContainer.classList.add('hidden');
@@ -816,45 +829,58 @@
     function popUpLoop() {
       if (!isPlaying) return;
 
-      // Hide all moles
+      // Find holes that are currently down
+      const availableIndices = [];
       for (let i = 0; i < 5; i++) {
-        document.getElementById(`mole-${i}`).classList.remove('up');
+        const mole = document.getElementById(`mole-${i}`);
+        if (!mole.classList.contains('up')) {
+          availableIndices.push(i);
+        }
       }
 
-      // Pick random hole index
-      const randomIndex = Math.floor(Math.random() * 5);
-      const chosenMole = document.getElementById(`mole-${randomIndex}`);
-      const moleImg = document.getElementById(`img-${randomIndex}`);
+      // Pop up a mole if at least one hole is available
+      if (availableIndices.length > 0) {
+        const randomIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+        const chosenMole = document.getElementById(`mole-${randomIndex}`);
+        const moleImg = document.getElementById(`img-${randomIndex}`);
 
-      // Decide if showing target item (~50% chance) or distractor
-      const isTarget = Math.random() < 0.5;
-      let selectedClassifier = targetClassifier;
+        // Decide if showing target item (~50% chance) or distractor
+        const isTarget = Math.random() < 0.5;
+        let selectedClassifier = targetClassifier;
 
-      if (!isTarget) {
-        // Select any distractor classifier except the target classifier
-        const otherClassifiers = Object.keys(itemsDatabase).filter(c => c !== targetClassifier);
-        selectedClassifier = otherClassifiers[Math.floor(Math.random() * otherClassifiers.length)];
+        if (!isTarget) {
+          const otherClassifiers = Object.keys(itemsDatabase).filter(c => c !== targetClassifier);
+          selectedClassifier = otherClassifiers[Math.floor(Math.random() * otherClassifiers.length)];
+        }
+
+        const pool = itemsDatabase[selectedClassifier];
+        const selectedItem = pool[Math.floor(Math.random() * pool.length)];
+
+        // Attach data onto mole element
+        chosenMole.dataset.classifier = selectedClassifier;
+        chosenMole.dataset.itemName = selectedItem.name;
+        chosenMole.dataset.whacked = "false";
+        moleImg.src = selectedItem.img;
+
+        // Initialize tracking item if not present
+        const fullItemName = `一${selectedClassifier}${selectedItem.name}`;
+        if (!trackedData[fullItemName]) {
+          trackedData[fullItemName] = { correctClicks: 0, wrongClicks: 0, targetClassifier: targetClassifier, itemClassifier: selectedClassifier };
+        }
+
+        chosenMole.classList.add('up');
+
+        // Set strict 5-second (5000ms) timer for this specific mole
+        moleStayTimeoutIds[randomIndex] = setTimeout(() => {
+          if (chosenMole.classList.contains('up')) {
+            chosenMole.classList.remove('up');
+          }
+          delete moleStayTimeoutIds[randomIndex];
+        }, MOLE_STAY_DURATION);
       }
 
-      const pool = itemsDatabase[selectedClassifier];
-      const selectedItem = pool[Math.floor(Math.random() * pool.length)];
-
-      // Attach data onto mole element
-      chosenMole.dataset.classifier = selectedClassifier;
-      chosenMole.dataset.itemName = selectedItem.name;
-      chosenMole.dataset.whacked = "false";
-      moleImg.src = selectedItem.img;
-
-      // Initialize tracking item if not present
-      const fullItemName = `一${selectedClassifier}${selectedItem.name}`;
-      if (!trackedData[fullItemName]) {
-        trackedData[fullItemName] = { correctClicks: 0, wrongClicks: 0, targetClassifier: targetClassifier, itemClassifier: selectedClassifier };
-      }
-
-      chosenMole.classList.add('up');
-
-      // Schedule next mole pop up between 0.9s and 1.4s
-      const delay = Math.floor(Math.random() * 500) + 900;
+      // Schedule next mole attempt
+      const delay = Math.floor(Math.random() * 500) + 800;
       moleTimer = setTimeout(popUpLoop, delay);
     }
 
@@ -865,6 +891,13 @@
       if (!mole.classList.contains('up') || mole.dataset.whacked === "true") return;
 
       mole.dataset.whacked = "true";
+      
+      // Clear auto-retract timer because player whacked it
+      if (moleStayTimeoutIds[index]) {
+        clearTimeout(moleStayTimeoutIds[index]);
+        delete moleStayTimeoutIds[index];
+      }
+
       const itemClassifier = mole.dataset.classifier;
       const itemName = mole.dataset.itemName;
       const fullItemName = `一${itemClassifier}${itemName}`;
@@ -900,6 +933,10 @@
       clearTimeout(moleTimer);
 
       for (let i = 0; i < 5; i++) {
+        if (moleStayTimeoutIds[i]) {
+          clearTimeout(moleStayTimeoutIds[i]);
+          delete moleStayTimeoutIds[i];
+        }
         document.getElementById(`mole-${i}`).classList.remove('up');
       }
 
