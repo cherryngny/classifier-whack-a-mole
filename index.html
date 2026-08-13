@@ -724,7 +724,7 @@
       ]
     };
 
-    // Strict stay time for active moles
+    // Strict stay time for active moles (5000ms)
     const MOLE_STAY_DURATION = 5000;
 
     let targetClassifier = '個';
@@ -784,7 +784,7 @@
       gameControls.classList.remove('hidden');
       gameContainer.classList.remove('hidden');
 
-      // Bind mole click events and clean state
+      // Reset and initialize all moles
       for (let i = 0; i < 5; i++) {
         const mole = document.getElementById(`mole-${i}`);
         mole.classList.remove('up');
@@ -829,7 +829,7 @@
     function popUpLoop() {
       if (!isPlaying) return;
 
-      // Find holes that are currently down
+      // STRICT FIX FOR IMAGE SWAPPING: Find only holes that are strictly DOWN (hidden)
       const availableIndices = [];
       for (let i = 0; i < 5; i++) {
         const mole = document.getElementById(`mole-${i}`);
@@ -838,7 +838,7 @@
         }
       }
 
-      // Pop up a mole if at least one hole is available
+      // Pop up an idle mole if one exists
       if (availableIndices.length > 0) {
         const randomIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
         const chosenMole = document.getElementById(`mole-${randomIndex}`);
@@ -856,7 +856,7 @@
         const pool = itemsDatabase[selectedClassifier];
         const selectedItem = pool[Math.floor(Math.random() * pool.length)];
 
-        // Attach data onto mole element
+        // Set data and image ONLY when the mole pops up
         chosenMole.dataset.classifier = selectedClassifier;
         chosenMole.dataset.itemName = selectedItem.name;
         chosenMole.dataset.whacked = "false";
@@ -870,7 +870,7 @@
 
         chosenMole.classList.add('up');
 
-        // Set strict 5-second (5000ms) timer for this specific mole
+        // STRICT 5000ms STAY TIMER: Mole stays frozen up for 5000ms unless clicked
         moleStayTimeoutIds[randomIndex] = setTimeout(() => {
           if (chosenMole.classList.contains('up')) {
             chosenMole.classList.remove('up');
@@ -879,7 +879,7 @@
         }, MOLE_STAY_DURATION);
       }
 
-      // Schedule next mole attempt
+      // Schedule next spawn attempt interval
       const delay = Math.floor(Math.random() * 500) + 800;
       moleTimer = setTimeout(popUpLoop, delay);
     }
@@ -892,7 +892,7 @@
 
       mole.dataset.whacked = "true";
       
-      // Clear auto-retract timer because player whacked it
+      // Clear auto-retract 5s timer because player whacked it
       if (moleStayTimeoutIds[index]) {
         clearTimeout(moleStayTimeoutIds[index]);
         delete moleStayTimeoutIds[index];
