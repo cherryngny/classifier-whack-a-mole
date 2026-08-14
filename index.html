@@ -484,6 +484,51 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.05);
     }
 
+    /* TARGET ITEMS GALLERY IN SUMMARY PAGE */
+    .target-gallery-container {
+      margin-top: 15px;
+      padding-top: 12px;
+      border-top: 1px dashed #38A169;
+    }
+
+    .target-gallery-title {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #276749;
+      margin-bottom: 10px;
+    }
+
+    .target-gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .target-gallery-card {
+      background: #F0FDF4;
+      border: 1px solid #BBF7D0;
+      border-radius: 8px;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .target-gallery-card img {
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+      margin-bottom: 4px;
+    }
+
+    .target-gallery-card span {
+      font-size: 0.85rem;
+      color: #276749;
+      font-weight: bold;
+    }
+
     .hidden { display: none !important; }
 
     @media print {
@@ -1073,6 +1118,18 @@
       const accuracy = totalClicks > 0 ? Math.round((totalCorrect / totalClicks) * 100) : 0;
       const levelSecs = (moleStayDuration / 1000).toFixed(1);
 
+      // Render target items image grid
+      const targetItems = itemsDatabase[targetClassifier] || [];
+      let targetGalleryHTML = '';
+      targetItems.forEach(item => {
+        targetGalleryHTML += `
+          <div class="target-gallery-card">
+            <img src="${item.img}" alt="${item.name}">
+            <span>一${targetClassifier}${item.name}</span>
+          </div>
+        `;
+      });
+
       summaryBox.innerHTML = `
         <div style="font-size: 1.1rem; margin-bottom: 8px; color: #276749;">
           🎯 <b>${childName}</b> 的打地鼠遊戲結果：
@@ -1082,6 +1139,13 @@
         <div><b>最終得分：</b>${score} 分</div>
         <div><b>整體準確度：</b>${totalCorrect} / ${totalClicks} (${accuracy}%)</div>
         ${itemsHTML ? `<hr style="border:0; border-top:1px dashed #CCC; margin:10px 0;"><ul style="padding-left:20px; margin:0;">${itemsHTML}</ul>` : ''}
+        
+        <div class="target-gallery-container">
+          <div class="target-gallery-title">🖼️ 目標量詞「${targetClassifier}」下的所有物品：</div>
+          <div class="target-gallery-grid">
+            ${targetGalleryHTML}
+          </div>
+        </div>
       `;
     }
   </script>
